@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+body{
+  background-color: #16160F;
+}
+
+h1 > h6 {
+
+}
+
+
+/* Custom Fonts and Colors */
+
+@font-face {
+  font-family: "Rajdhani";
+  src: url(./assets/fonts/rajdhani/Rajdhani-Bold.ttf);
+}
+
+
+@theme{
+  --color-gfx-black: #0A0A08;
+  --color-gfx-deep-black: #16160F;
+  --color-gfx-gray: #5A5955;
+  --color-gfx-blue: #4A6572;
+  --color-gfx-teal: #7A9299;
+  --color-light-gray: #E8E8E8;
+  --color-gfx-white: #FFFFFF;
+}
+
+
+.rajdhani-font{
+  font-family: "Rajdhani";
+}
+
+.inter-font{
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+}
