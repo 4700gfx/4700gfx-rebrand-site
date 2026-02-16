@@ -8,6 +8,7 @@ import Pricing from './components/sections/Pricing'
 import Faq from './components/sections/FAQ'
 import Footer from './components/sections/Footer'
 import VisitUs from './components/sections/VisitUs'
+import Testimonials from './components/sections/Testimonials'
 
 
 
@@ -20,6 +21,7 @@ function App() {
       <WhatWeDo></WhatWeDo>
       <WhatWeOffer></WhatWeOffer>
       <Portfolio></Portfolio>
+      <Testimonials></Testimonials>
       <Pricing></Pricing>
       <Faq></Faq>
       <VisitUs></VisitUs>
