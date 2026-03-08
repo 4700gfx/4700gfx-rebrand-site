@@ -1,643 +1,815 @@
-import React, { useState, useEffect } from 'react';
-import labelScreenshot from '../images/4700enterprises.png';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import {
+  ArrowRight, ChevronLeft, ChevronRight,
+  ExternalLink, LayoutGrid, Layers,
+  Clock, FileText, Package, CheckCircle2,
+  Pause, Play, Tag,
+} from 'lucide-react';
+
+import labelScreenshot  from '../images/4700enterprises.png';
 import labelScreenshot2 from '../images/4700enterprises-team.png';
 import labelScreenshot3 from '../images/4700enterprises-about.png';
-import nailCanvas1 from '../images/the-nail-canvas-hero.png';
-import nailCanvas2 from '../images/the-nail-canvas-testimony.png';
-import nailCanvas3 from '../images/the-nail-canvas-benefits.png';
-import mohScreenshot1 from '../images/moh-testimony.png';
-import mohScreenshot2 from '../images/moh-services.png';
-import mohScreenshot3 from '../images/moh-faq-footer.png';
+import nailCanvas1      from '../images/the-nail-canvas-hero.png';
+import nailCanvas2      from '../images/the-nail-canvas-testimony.png';
+import nailCanvas3      from '../images/the-nail-canvas-benefits.png';
+import mohScreenshot1   from '../images/moh-testimony.png';
+import mohScreenshot2   from '../images/moh-services.png';
+import mohScreenshot3   from '../images/moh-faq-footer.png';
 
-const Portfolio = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [viewMode, setViewMode] = useState('carousel'); // 'carousel' or 'grid'
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [autoplay, setAutoplay] = useState(true);
+gsap.registerPlugin(ScrollTrigger);
 
-  const projects = [
-    {
-      id: 1,
-      name: '4700 Enterprises',
-      category: 'Corporate',
-      tagline: 'Multi-Service Enterprise Platform',
-      description: 'A comprehensive corporate website showcasing multiple service divisions with team profiles and detailed service offerings. Built with modern React architecture and custom animations to create an engaging user experience.',
-      highlights: [
-        'Custom-coded multi-page architecture with seamless navigation',
-        'Team member profiles with dynamic filtering capabilities',
-        'Service showcase with interactive hover effects',
-        'Fully responsive design optimized for all devices',
-        'Integrated contact forms with real-time validation'
-      ],
-      tags: ['Branding', 'Multi-Page', 'Corporate', 'React'],
-      images: [labelScreenshot, labelScreenshot2, labelScreenshot3],
-      stats: {
-        pages: '8',
-        timeline: '6 weeks',
-        package: 'GROWTH'
-      },
-      gradient: 'from-blue-500 to-cyan-500'
-    },
-    {
-      id: 2,
-      name: 'The Nail Canvas',
-      category: 'Beauty & Wellness',
-      tagline: 'Premium Nail Salon Experience',
-      description: 'Elegant salon website featuring services, testimonials, and benefits with booking integration and gallery showcase. Designed to reflect the luxury and artistry of premium nail services with stunning visuals and smooth interactions.',
-      highlights: [
-        'Stunning hero section with professional photography',
-        'Service catalog with detailed pricing and descriptions',
-        'Client testimonial carousel with star ratings',
-        'Benefits section highlighting unique value propositions',
-        'Mobile-first design for on-the-go bookings'
-      ],
-      tags: ['E-commerce', 'Booking', 'Lifestyle', 'Gallery'],
-      images: [nailCanvas1, nailCanvas2, nailCanvas3],
-      stats: {
-        pages: '5',
-        timeline: '4 weeks',
-        package: 'ELEVATE'
-      },
-      gradient: 'from-pink-500 to-rose-500'
-    },
-    {
-      id: 3,
-      name: 'MOH Services',
-      category: 'Professional Services',
-      tagline: 'Healthcare Consulting Platform',
-      description: 'Professional service website with testimonials, detailed service pages, comprehensive FAQ section, and contact integration. Designed to build trust and credibility in the healthcare consulting space with clean, professional aesthetics.',
-      highlights: [
-        'Trust-building testimonials section with video integration',
-        'Comprehensive service pages with detailed explanations',
-        'Interactive FAQ accordion for quick information access',
-        'Professional footer with multiple contact methods',
-        'HIPAA-compliant contact forms and data handling'
-      ],
-      tags: ['Healthcare', 'Professional', 'Multi-Page', 'Consulting'],
-      images: [mohScreenshot1, mohScreenshot2, mohScreenshot3],
-      stats: {
-        pages: '6',
-        timeline: '5 weeks',
-        package: 'ELEVATE'
-      },
-      gradient: 'from-emerald-500 to-teal-500'
-    },
-    {
-      id: 4,
-      name: 'Elite Fitness Studio',
-      category: 'Health & Fitness',
-      tagline: 'Premium Fitness & Wellness Hub',
-      description: 'Dynamic fitness studio website featuring class schedules, trainer profiles, membership plans, and online booking system. Built to inspire and motivate with energetic design elements and seamless user experience for fitness enthusiasts.',
-      highlights: [
-        'Interactive class schedule with real-time availability',
-        'Trainer profile showcase with specializations and credentials',
-        'Flexible membership tier comparison with pricing calculator',
-        'Integrated booking system with calendar synchronization',
-        'Progress tracking dashboard for member achievements'
-      ],
-      tags: ['Fitness', 'Booking', 'Membership', 'Wellness'],
-      images: [labelScreenshot, nailCanvas1, mohScreenshot1],
-      stats: {
-        pages: '7',
-        timeline: '5 weeks',
-        package: 'GROWTH'
-      },
-      gradient: 'from-orange-500 to-red-500'
-    }
-  ];
+// ─────────────────────────────────────────────────────────────────────────────
+// Data
+// ─────────────────────────────────────────────────────────────────────────────
+const projects = [
+  {
+    id: 1,
+    name: '4700 Enterprises',
+    category: 'Corporate',
+    tagline: 'Multi-Service Enterprise Platform',
+    description:
+      'A comprehensive corporate website showcasing multiple service divisions, team profiles, and detailed service offerings. Built with modern React architecture and custom animations to create an engaging, conversion-focused experience.',
+    highlights: [
+      'Custom-coded multi-page architecture with seamless navigation',
+      'Team member profiles with dynamic filtering capabilities',
+      'Service showcase with interactive hover effects',
+      'Fully responsive design optimised for all devices',
+      'Integrated contact forms with real-time validation',
+    ],
+    tags: ['Branding', 'Multi-Page', 'Corporate', 'React'],
+    images: [labelScreenshot, labelScreenshot2, labelScreenshot3],
+    stats: { pages: '8', timeline: '6 weeks', package: 'GROWTH' },
+    liveUrl: 'https://4700enterprises.com',
+    accentFrom: '#7A9299',
+    accentTo:   '#4A6572',
+  },
+  {
+    id: 2,
+    name: 'The Nail Canvas',
+    category: 'Beauty & Wellness',
+    tagline: 'Premium Nail Salon Experience',
+    description:
+      'Elegant salon website featuring services, testimonials, and a booking-integrated gallery showcase. Designed to reflect the luxury and artistry of premium nail services with stunning visuals and silky smooth interactions.',
+    highlights: [
+      'Stunning hero section with professional photography',
+      'Service catalog with detailed pricing and descriptions',
+      'Client testimonial carousel with star ratings',
+      'Benefits section highlighting unique value propositions',
+      'Mobile-first design for on-the-go bookings',
+    ],
+    tags: ['E-Commerce', 'Booking', 'Lifestyle', 'Gallery'],
+    images: [nailCanvas1, nailCanvas2, nailCanvas3],
+    stats: { pages: '5', timeline: '4 weeks', package: 'ELEVATE' },
+    liveUrl: 'https://thenailcanvas.com',
+    accentFrom: '#9299A0',
+    accentTo:   '#5A6572',
+  },
+  {
+    id: 3,
+    name: 'MOH Services',
+    category: 'Healthcare',
+    tagline: 'Healthcare Consulting Platform',
+    description:
+      'Professional service website with testimonials, detailed service pages, a comprehensive FAQ section, and contact integration. Designed to build trust and credibility in the healthcare consulting space with clean, authoritative aesthetics.',
+    highlights: [
+      'Trust-building testimonials section with video integration',
+      'Comprehensive service pages with detailed explanations',
+      'Interactive FAQ accordion for quick information access',
+      'Professional footer with multiple contact methods',
+      'HIPAA-compliant contact forms and data handling',
+    ],
+    tags: ['Healthcare', 'Professional', 'Multi-Page', 'Consulting'],
+    images: [mohScreenshot1, mohScreenshot2, mohScreenshot3],
+    stats: { pages: '6', timeline: '5 weeks', package: 'ELEVATE' },
+    liveUrl: 'https://manifestsofhope.com',
+    accentFrom: '#7A9299',
+    accentTo:   '#4A6572',
+  },
+  {
+    id: 4,
+    name: 'Elite Fitness Studio',
+    category: 'Health & Fitness',
+    tagline: 'Premium Fitness & Wellness Hub',
+    description:
+      'Dynamic fitness studio website featuring class schedules, trainer profiles, membership plans, and an online booking system. Built to inspire and motivate with energetic design elements and a seamless member experience.',
+    highlights: [
+      'Interactive class schedule with real-time availability',
+      'Trainer profiles with specialisations and credentials',
+      'Flexible membership tier comparison with pricing calculator',
+      'Integrated booking system with calendar synchronisation',
+      'Progress tracking dashboard for member achievements',
+    ],
+    tags: ['Fitness', 'Booking', 'Membership', 'Wellness'],
+    images: [labelScreenshot, nailCanvas1, mohScreenshot1],
+    stats: { pages: '7', timeline: '5 weeks', package: 'GROWTH' },
+    liveUrl: null,
+    accentFrom: '#8A9AA0',
+    accentTo:   '#526470',
+  },
+];
 
-  // Auto-play carousel
+const summaryStats = [
+  { value: '20+',   label: 'Projects Delivered' },
+  { value: '100%',  label: 'Client Satisfaction' },
+  { value: '24-48h',label: 'Support Response'   },
+  { value: '5.0★',  label: 'Average Rating'      },
+];
+
+const AUTOPLAY_MS = 6000;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Progress bar
+// ─────────────────────────────────────────────────────────────────────────────
+const ProgressBar = ({ isPlaying, duration, resetKey, onComplete }) => {
+  const [pct, setPct]  = useState(0);
+  const rafRef         = useRef(null);
+  const startRef       = useRef(null);
+
   useEffect(() => {
-    if (autoplay && viewMode === 'carousel') {
-      const interval = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % projects.length);
-      }, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [autoplay, viewMode, projects.length]);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % projects.length);
-    setAutoplay(false);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + projects.length) % projects.length);
-    setAutoplay(false);
-  };
-
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-    setAutoplay(false);
-  };
+    setPct(0);
+    cancelAnimationFrame(rafRef.current);
+    if (!isPlaying) return;
+    startRef.current = null;
+    const tick = (ts) => {
+      if (!startRef.current) startRef.current = ts;
+      const p = Math.min(((ts - startRef.current) / duration) * 100, 100);
+      setPct(p);
+      if (p < 100) rafRef.current = requestAnimationFrame(tick);
+      else         onComplete();
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [isPlaying, duration, resetKey]); // eslint-disable-line
 
   return (
-    <section className="py-20 lg:py-32 relative overflow-hidden">
+    <div className="h-[3px] w-full rounded-full overflow-hidden" style={{ background: 'rgba(122,146,153,0.15)' }}>
+      <div className="h-full rounded-full"
+        style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#7A9299,#4A6572)', transition: 'width 0.04s linear' }} />
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Package colour helper
+// ─────────────────────────────────────────────────────────────────────────────
+const pkgStyle = {
+  LAUNCH:  { bg: 'rgba(122,146,153,0.15)', border: 'rgba(122,146,153,0.4)',  text: '#7A9299' },
+  ELEVATE: { bg: 'rgba(74,101,114,0.20)',  border: 'rgba(74,101,114,0.5)',   text: '#8DAAB0' },
+  GROWTH:  { bg: 'rgba(90,89,85,0.20)',    border: 'rgba(90,89,85,0.5)',     text: '#C0BFBA' },
+  SCALE:   { bg: 'rgba(122,146,153,0.25)', border: 'rgba(122,146,153,0.6)',  text: '#FFFFFF' },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Main component
+// ─────────────────────────────────────────────────────────────────────────────
+const Portfolio = () => {
+  const [viewMode,    setViewMode]    = useState('carousel');
+  const [slide,       setSlide]       = useState(0);
+  const [imgIdx,      setImgIdx]      = useState(0);
+  const [playing,     setPlaying]     = useState(true);
+  const [progKey,     setProgKey]     = useState(0);
+  const [cardKey,     setCardKey]     = useState(0);
+
+  const sectionRef  = useRef(null);
+  const badgeRef    = useRef(null);
+  const h2Ref       = useRef(null);
+  const ruleRef     = useRef(null);
+  const subRef      = useRef(null);
+  const toggleRef   = useRef(null);
+  const carouselRef = useRef(null);
+  const statsRef    = useRef(null);
+  const ctaRef      = useRef(null);
+  const gridRef     = useRef(null);
+
+  // ── navigation ───────────────────────────────────────────────────────
+  const goTo = useCallback((i) => {
+    setSlide(i); setImgIdx(0);
+    setProgKey((k) => k + 1);
+    setCardKey((k) => k + 1);
+  }, []);
+  const next   = useCallback(() => goTo((slide + 1) % projects.length), [slide, goTo]);
+  const prev   = useCallback(() => goTo((slide - 1 + projects.length) % projects.length), [slide, goTo]);
+  const manual = (fn) => { fn(); setPlaying(false); };
+
+  const cur = projects[slide];
+  const pkg = pkgStyle[cur.stats.package] || pkgStyle.LAUNCH;
+
+  // ── GSAP entrance ────────────────────────────────────────────────────
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+
+      gsap.fromTo(badgeRef.current,
+        { y: 40, opacity: 0, scale: 0.78 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.75, ease: 'back.out(2)',
+          scrollTrigger: { trigger: badgeRef.current, start: 'top 87%', toggleActions: 'play none none none' } }
+      );
+
+      const words = h2Ref.current?.querySelectorAll('.gsap-w');
+      if (words?.length) {
+        gsap.fromTo(words,
+          { y: 60, opacity: 0, rotateX: -45 },
+          { y: 0, opacity: 1, rotateX: 0, duration: 0.78, stagger: 0.065, ease: 'power3.out',
+            scrollTrigger: { trigger: h2Ref.current, start: 'top 84%', toggleActions: 'play none none none' } }
+        );
+      }
+
+      gsap.fromTo(ruleRef.current,
+        { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: 0.65, ease: 'power2.out', transformOrigin: 'center',
+          scrollTrigger: { trigger: ruleRef.current, start: 'top 88%', toggleActions: 'play none none none' } }
+      );
+
+      gsap.fromTo([subRef.current, toggleRef.current],
+        { y: 28, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.70, stagger: 0.1, ease: 'power2.out',
+          scrollTrigger: { trigger: subRef.current, start: 'top 86%', toggleActions: 'play none none none' } }
+      );
+
+      gsap.fromTo(carouselRef.current,
+        { y: 72, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.0, ease: 'power3.out',
+          scrollTrigger: { trigger: carouselRef.current, start: 'top 82%', toggleActions: 'play none none none' } }
+      );
+
+      const sc = statsRef.current?.querySelectorAll('.sum-card');
+      if (sc?.length) {
+        gsap.fromTo(sc,
+          { y: 44, opacity: 0, scale: 0.9 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.65, stagger: 0.10, ease: 'back.out(1.5)',
+            scrollTrigger: { trigger: statsRef.current, start: 'top 85%', toggleActions: 'play none none none' } }
+        );
+      }
+
+      gsap.fromTo(ctaRef.current,
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.85, ease: 'power3.out',
+          scrollTrigger: { trigger: ctaRef.current, start: 'top 88%', toggleActions: 'play none none none' } }
+      );
+
+      sectionRef.current?.querySelectorAll('.orb-par').forEach((el, i) => {
+        gsap.to(el, {
+          y: i % 2 === 0 ? -90 : -55,
+          ease: 'none',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top bottom', end: 'bottom top', scrub: i % 2 === 0 ? 2 : 3 },
+        });
+      });
+
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
+  // ── GSAP card content re-enter on slide change ────────────────────────
+  useEffect(() => {
+    if (!carouselRef.current) return;
+    const left  = carouselRef.current.querySelector('.card-img-col');
+    const right = carouselRef.current.querySelector('.card-info-col');
+    if (left)  gsap.fromTo(left,  { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.55, ease: 'power3.out' });
+    if (right) gsap.fromTo(right, { x:  40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.55, ease: 'power3.out', delay: 0.07 });
+  }, [cardKey]);
+
+  // ── grid cards animate in when mode switches ──────────────────────────
+  useEffect(() => {
+    if (viewMode !== 'grid' || !gridRef.current) return;
+    const cards = gridRef.current.querySelectorAll('.grid-card');
+    gsap.fromTo(cards,
+      { y: 50, opacity: 0, scale: 0.93 },
+      { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: 0.09, ease: 'power3.out' }
+    );
+  }, [viewMode]);
+
+  // ─────────────────────────────────────────────────────────────────────
+  return (
+    <section ref={sectionRef} id="portfolio" className="py-20 lg:py-32 relative overflow-hidden">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        .rajdhani-font {
-          font-family: 'Rajdhani', sans-serif;
+        @keyframes sh-port {
+          0%   { background-position: -200% center; }
+          100% { background-position:  200% center; }
         }
-        
-        .inter-font {
-          font-family: 'Inter', sans-serif;
+        @keyframes img-ken {
+          0%   { transform: scale(1);    }
+          100% { transform: scale(1.06); }
         }
-
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        @keyframes thumb-in {
+          from { opacity: 0; transform: translateY(8px) scale(0.95); }
+          to   { opacity: 1; transform: translateY(0)   scale(1);    }
         }
 
-        @keyframes slideInFromRight {
-          from {
-            opacity: 0;
-            transform: translateX(100px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
+        /* Headline shimmer */
+        .acc-port {
+          background: linear-gradient(90deg,#7A9299 0%,#fff 35%,#4A6572 60%,#7A9299 100%);
+          background-size: 250% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: sh-port 4.5s linear infinite;
         }
 
-        @keyframes slideInFromLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-100px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
+        .sh-rule-p {
+          background: linear-gradient(90deg, transparent, #7A9299 30%, #4A6572 70%, transparent);
+          background-size: 200% auto;
+          animation: sh-port 3.5s linear infinite;
         }
 
-        .animate-fade-in-up {
-          animation: fadeInUp 0.8s ease-out forwards;
-          opacity: 0;
-        }
-
-        .animate-slide-right {
-          animation: slideInFromRight 0.7s ease-out forwards;
-        }
-
-        .animate-slide-left {
-          animation: slideInFromLeft 0.7s ease-out forwards;
-        }
-
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-300 { animation-delay: 0.3s; }
-        .delay-400 { animation-delay: 0.4s; }
-        .delay-500 { animation-delay: 0.5s; }
-
-        .portfolio-card {
-          position: relative;
-          background: linear-gradient(135deg, rgba(0, 186, 242, 0.05) 0%, rgba(45, 52, 54, 0.1) 100%);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(0, 186, 242, 0.15);
-          transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .portfolio-card::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          border-radius: inherit;
-          padding: 1px;
-          background: linear-gradient(135deg, rgba(0, 186, 242, 0.4), transparent, rgba(0, 186, 242, 0.2));
-          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-          -webkit-mask-composite: xor;
-          mask-composite: exclude;
-          opacity: 0;
-          transition: opacity 0.6s;
-        }
-
-        .portfolio-card:hover::before {
-          opacity: 1;
-        }
-
-        .image-container {
-          position: relative;
-          overflow: hidden;
-          border-radius: 1rem;
-        }
-
-        .image-container::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
-          opacity: 0;
-          transition: opacity 0.4s;
-        }
-
-        .portfolio-card:hover .image-container::after {
-          opacity: 1;
-        }
-
-        .screenshot-thumbnail {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .portfolio-card:hover .screenshot-thumbnail {
-          transform: scale(1.05);
-        }
-
-        .carousel-container {
-          position: relative;
-          overflow: hidden;
-        }
-
-        .carousel-track {
-          display: flex;
-          transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .carousel-slide {
-          min-width: 100%;
-          flex-shrink: 0;
-        }
-
-        .nav-button {
-          transition: all 0.3s ease;
+        /* Badge */
+        .port-badge {
+          background: rgba(122,146,153,0.09);
+          border: 1px solid rgba(122,146,153,0.28);
           backdrop-filter: blur(10px);
         }
 
-        .nav-button:hover {
-          transform: scale(1.1);
-          background: rgba(0, 186, 242, 0.2);
+        /* Toggle buttons */
+        .view-btn {
+          background: transparent;
+          border: 1px solid transparent;
+          transition: all 0.3s ease;
+          color: rgba(255,255,255,0.50);
+        }
+        .view-btn.v-active {
+          background: rgba(122,146,153,0.15);
+          border-color: rgba(122,146,153,0.45);
+          color: #ffffff;
+          box-shadow: 0 4px 16px rgba(74,101,114,0.22);
+        }
+        .view-btn:hover:not(.v-active) { color: rgba(255,255,255,0.80); }
+
+        /* ── Carousel card ── */
+        .port-card {
+          background: linear-gradient(145deg, rgba(122,146,153,0.09) 0%, rgba(10,10,8,0.60) 100%);
+          border: 1px solid rgba(122,146,153,0.20);
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+          position: relative; overflow: hidden;
+        }
+        .port-card::before {
+          content:'';
+          position:absolute; top:0; left:0; right:0; height:1px;
+          background: linear-gradient(90deg, transparent, rgba(122,146,153,0.55), rgba(74,101,114,0.55), transparent);
         }
 
-        .nav-button:active {
-          transform: scale(0.95);
+        /* Main image */
+        .main-img {
+          width:100%; height:100%; object-fit:cover;
+          animation: img-ken 8s ease-in-out alternate infinite;
         }
 
-        .dot-indicator {
+        /* Thumbnail strip */
+        .thumb {
+          flex-shrink: 0;
+          width: 72px; height: 52px;
+          border-radius: 8px; overflow:hidden;
+          border: 2px solid rgba(122,146,153,0.20);
+          cursor:pointer;
+          transition: all 0.3s ease;
+          animation: thumb-in 0.4s ease both;
+        }
+        .thumb:hover { border-color: rgba(122,146,153,0.60); transform: scale(1.06); }
+        .thumb.t-active { border-color: #7A9299; box-shadow: 0 0 12px rgba(122,146,153,0.45); }
+        .thumb img { width:100%; height:100%; object-fit:cover; }
+
+        /* Category badge */
+        .cat-badge {
+          background: rgba(10,10,8,0.75);
+          border: 1px solid rgba(122,146,153,0.35);
+          backdrop-filter: blur(8px);
+        }
+
+        /* Highlight item */
+        .hl-item {
+          display: flex; gap: 10px; align-items: flex-start;
+          padding: 8px 10px; border-radius: 10px;
+          background: rgba(122,146,153,0.06);
+          border: 1px solid rgba(122,146,153,0.12);
+          transition: all 0.28s ease;
+        }
+        .hl-item:hover {
+          background: rgba(122,146,153,0.12);
+          border-color: rgba(122,146,153,0.30);
+          transform: translateX(4px);
+        }
+
+        /* Tag pill */
+        .tag-pill {
+          background: rgba(122,146,153,0.08);
+          border: 1px solid rgba(122,146,153,0.22);
+          transition: all 0.28s ease;
+        }
+        .tag-pill:hover {
+          background: rgba(122,146,153,0.18);
+          border-color: rgba(122,146,153,0.48);
+        }
+
+        /* Stat chip */
+        .stat-chip {
+          background: rgba(122,146,153,0.08);
+          border: 1px solid rgba(122,146,153,0.18);
           transition: all 0.3s ease;
         }
-
-        .dot-indicator.active {
-          background: linear-gradient(135deg, #00BAF2, #0099CC);
-          transform: scale(1.3);
+        .stat-chip:hover {
+          background: rgba(122,146,153,0.16);
+          border-color: rgba(122,146,153,0.40);
+          transform: translateY(-2px);
         }
 
-        .view-toggle {
+        /* Nav buttons */
+        .nav-btn-p {
+          background: rgba(122,146,153,0.09);
+          border: 1px solid rgba(122,146,153,0.26);
+          backdrop-filter: blur(8px);
           transition: all 0.3s ease;
         }
-
-        .view-toggle.active {
-          background: linear-gradient(135deg, rgba(0, 186, 242, 0.2), rgba(45, 52, 54, 0.3));
-          border-color: rgba(0, 186, 242, 0.6);
+        .nav-btn-p:hover {
+          background: rgba(122,146,153,0.22);
+          border-color: rgba(122,146,153,0.60);
+          transform: scale(1.12);
+          box-shadow: 0 8px 28px rgba(74,101,114,.32);
         }
 
-        .thumbnail-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 0.5rem;
+        /* Dot pills */
+        .dpill-p {
+          height: 8px; border-radius: 4px;
+          background: rgba(255,255,255,0.18);
+          cursor:pointer;
+          transition: all 0.4s cubic-bezier(.4,0,.2,1);
+        }
+        .dpill-p:hover { background:rgba(122,146,153,0.50); }
+        .dpill-p.dp-on {
+          background: linear-gradient(90deg,#7A9299,#4A6572) !important;
+          box-shadow: 0 2px 12px rgba(74,101,114,.45);
         }
 
-        .thumbnail-item {
-          cursor: pointer;
-          border: 2px solid transparent;
-          transition: all 0.3s ease;
+        /* Primary CTA btn */
+        .cta-p {
+          background: linear-gradient(135deg,#7A9299 0%,#4A6572 100%);
+          border: 1px solid rgba(122,146,153,0.28);
+          transition: all 0.35s ease;
+          position:relative; overflow:hidden;
+        }
+        .cta-p::after {
+          content:''; position:absolute; inset:0;
+          background: linear-gradient(135deg,rgba(255,255,255,0.11),transparent);
+          opacity:0; transition:opacity 0.35s;
+        }
+        .cta-p:hover::after { opacity:1; }
+        .cta-p:hover { transform:translateY(-3px) scale(1.04); box-shadow:0 18px 44px rgba(74,101,114,.50); }
+        .cta-p span { position:relative; z-index:1; }
+
+        /* Ghost CTA */
+        .cta-ghost-p {
+          background: rgba(122,146,153,0.07);
+          border: 1px solid rgba(122,146,153,0.28);
+          transition: all 0.35s ease;
+        }
+        .cta-ghost-p:hover {
+          background: rgba(122,146,153,0.16);
+          border-color: rgba(122,146,153,0.55);
+          transform:translateY(-3px) scale(1.04);
+          box-shadow: 0 14px 36px rgba(74,101,114,0.25);
         }
 
-        .thumbnail-item:hover {
-          border-color: rgba(0, 186, 242, 0.5);
-          transform: scale(1.05);
+        /* Summary stat cards */
+        .sum-card {
+          background: linear-gradient(145deg,rgba(122,146,153,0.09) 0%,rgba(10,10,8,0.55) 100%);
+          border: 1px solid rgba(122,146,153,0.18);
+          backdrop-filter: blur(14px);
+          transition: all 0.38s ease;
+          position:relative; overflow:hidden;
+        }
+        .sum-card::after {
+          content:''; position:absolute; top:0; left:0; right:0; height:2px;
+          background: linear-gradient(90deg,transparent,rgba(122,146,153,0.6),transparent);
+          opacity:0; transition:opacity 0.38s;
+        }
+        .sum-card:hover::after { opacity:1; }
+        .sum-card:hover { border-color:rgba(122,146,153,0.48); transform:translateY(-6px); box-shadow:0 20px 48px rgba(74,101,114,0.28); }
+
+        /* Grid card */
+        .grid-card {
+          background: linear-gradient(145deg,rgba(122,146,153,0.09) 0%,rgba(10,10,8,0.60) 100%);
+          border: 1px solid rgba(122,146,153,0.18);
+          backdrop-filter: blur(14px);
+          transition: all 0.4s cubic-bezier(0.34,1.1,0.64,1);
+          position:relative; overflow:hidden;
+        }
+        .grid-card::after {
+          content:''; position:absolute; top:0; left:0; right:0; height:1px;
+          background: linear-gradient(90deg,transparent,rgba(122,146,153,0.55),transparent);
+          opacity:0; transition:opacity 0.4s;
+        }
+        .grid-card:hover::after { opacity:1; }
+        .grid-card:hover {
+          border-color:rgba(122,146,153,0.50);
+          transform:translateY(-10px) scale(1.02);
+          box-shadow:0 28px 60px rgba(74,101,114,.30);
+        }
+        .grid-card:hover .gc-img { transform:scale(1.07); }
+        .gc-img { transition:transform 0.6s ease; width:100%; height:100%; object-fit:cover; }
+
+        /* CTA block */
+        .cta-block {
+          background: linear-gradient(145deg,rgba(122,146,153,0.08) 0%,rgba(10,10,8,0.62) 100%);
+          border: 1px solid rgba(122,146,153,0.20);
+          backdrop-filter: blur(16px);
+          position:relative; overflow:hidden;
+        }
+        .cta-block::before {
+          content:''; position:absolute; top:0; left:0; right:0; height:1px;
+          background: linear-gradient(90deg,transparent,rgba(122,146,153,0.55),rgba(74,101,114,0.55),transparent);
         }
 
-        .thumbnail-item.active {
-          border-color: #00BAF2;
-        }
+        /* BG orbs */
+        .orb-p { position:absolute; border-radius:50%; pointer-events:none; filter:blur(72px); }
 
-        @keyframes shimmer {
-          0% {
-            background-position: -1000px 0;
-          }
-          100% {
-            background-position: 1000px 0;
-          }
-        }
-
-        .shimmer {
-          background: linear-gradient(90deg, transparent, rgba(0, 186, 242, 0.1), transparent);
-          background-size: 1000px 100%;
-          animation: shimmer 3s infinite;
-        }
+        /* GSAP word */
+        .gsap-w { display:inline-block; }
       `}</style>
 
-      {/* Background elements */}
+      {/* ── Background ── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gfx-teal/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gfx-blue/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div className="orb-p orb-par w-[520px] h-[520px] top-[12%] left-[5%]"
+          style={{ background:'radial-gradient(circle,rgba(122,146,153,0.10) 0%,transparent 70%)' }} />
+        <div className="orb-p orb-par w-[420px] h-[420px] bottom-[15%] right-[6%]"
+          style={{ background:'radial-gradient(circle,rgba(74,101,114,0.09) 0%,transparent 70%)' }} />
+        <div className="orb-p w-[300px] h-[300px] top-[55%] left-[42%]"
+          style={{ background:'radial-gradient(circle,rgba(90,89,85,0.06) 0%,transparent 70%)' }} />
+        <div className="absolute inset-0 opacity-[0.018]"
+          style={{
+            backgroundImage:`linear-gradient(rgba(122,146,153,1) 1px,transparent 1px),linear-gradient(90deg,rgba(122,146,153,1) 1px,transparent 1px)`,
+            backgroundSize:'80px 80px',
+          }} />
       </div>
 
-      <div className="w-[85%] max-w-7xl mx-auto relative z-10">
-        {/* Header */}
-        <div className="text-center mb-12 lg:mb-16 animate-fade-in-up">
-          <h2 className="inter-font text-gfx-white text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-6">
-            Featured{' '}
-            <span className="relative inline-block">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gfx-teal via-gfx-blue to-gfx-teal">
-                Projects
-              </span>
-              <div className="absolute -bottom-2 left-0 right-0 h-1.5 bg-gradient-to-r from-gfx-teal via-gfx-blue to-gfx-teal rounded-full"></div>
+      <div className="w-[88%] max-w-7xl mx-auto relative z-10">
+
+        {/* ── Header ── */}
+        <div className="text-center mb-12">
+
+          <div ref={badgeRef} className="inline-flex items-center gap-2.5 mb-7 px-5 py-2 rounded-full port-badge">
+            <Layers className="w-4 h-4 text-gfx-teal" />
+            <span className="inter-font text-gfx-teal font-semibold text-xs uppercase tracking-widest">
+              Featured Work
+            </span>
+          </div>
+
+          <h2
+            ref={h2Ref}
+            className="rajdhani-font text-gfx-white text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-5"
+            style={{ perspective:'900px' }}
+          >
+            {'Featured'.split(' ').map((w, i) => (
+              <span key={i} className="gsap-w">{w}&nbsp;</span>
+            ))}
+            <span className="acc-port">
+              {'Projects.'.split(' ').map((w, i) => (
+                <span key={i} className="gsap-w">{w}&nbsp;</span>
+              ))}
             </span>
           </h2>
-          <p className="inter-font text-gfx-white/80 text-lg lg:text-xl max-w-3xl mx-auto mb-8">
-            Transforming visions into digital excellence. Explore our latest work.
+
+          <div ref={ruleRef} className="sh-rule-p h-[2px] w-24 rounded-full mx-auto mb-6" />
+
+          <p ref={subRef} className="inter-font text-gfx-white/60 text-base lg:text-[17px] max-w-2xl mx-auto mb-8">
+            Transforming visions into digital excellence. Every project is custom-coded, conversion-focused, and built to last.
           </p>
 
-          {/* View Mode Toggle */}
-          <div className="inline-flex gap-2 p-1.5 rounded-xl bg-gfx-white/5 border border-gfx-teal/20">
-            <button
-              onClick={() => setViewMode('carousel')}
-              className={`view-toggle px-6 py-2.5 rounded-lg inter-font font-semibold text-sm border ${
-                viewMode === 'carousel' ? 'active text-gfx-white' : 'text-gfx-white/60 border-transparent'
-              }`}
-            >
-              <span className="flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
-                </svg>
-                Carousel
-              </span>
+          {/* View toggle */}
+          <div ref={toggleRef} className="inline-flex gap-1.5 p-1.5 rounded-xl"
+            style={{ background:'rgba(122,146,153,0.07)', border:'1px solid rgba(122,146,153,0.18)' }}>
+            <button onClick={() => setViewMode('carousel')}
+              className={`view-btn inter-font font-semibold text-sm px-5 py-2 rounded-lg flex items-center gap-2 ${viewMode==='carousel' ? 'v-active' : ''}`}>
+              <Layers className="w-4 h-4" /> Carousel
             </button>
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`view-toggle px-6 py-2.5 rounded-lg inter-font font-semibold text-sm border ${
-                viewMode === 'grid' ? 'active text-gfx-white' : 'text-gfx-white/60 border-transparent'
-              }`}
-            >
-              <span className="flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                </svg>
-                Grid
-              </span>
+            <button onClick={() => setViewMode('grid')}
+              className={`view-btn inter-font font-semibold text-sm px-5 py-2 rounded-lg flex items-center gap-2 ${viewMode==='grid' ? 'v-active' : ''}`}>
+              <LayoutGrid className="w-4 h-4" /> Grid
             </button>
           </div>
         </div>
 
-        {/* Carousel View */}
+        {/* ── Carousel View ── */}
         {viewMode === 'carousel' && (
-          <div className="animate-fade-in-up delay-100" style={{ opacity: 0 }}>
-            <div className="carousel-container mb-6 relative">
-              <div
-                className="carousel-track"
-                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-              >
-                {projects.map((project, index) => (
-                  <div key={project.id} className="carousel-slide px-2">
-                    <div className="portfolio-card rounded-xl overflow-hidden max-h-[480px] max-w-3xl mx-auto">
-                      <div className="flex flex-col">
-                        {/* Image Section - Compact */}
-                        <div className="relative group">
-                          <div className="image-container h-[200px]">
-                            <img
-                              src={project.images[selectedImage || 0]}
-                              alt={`${project.name} screenshot`}
-                              className="screenshot-thumbnail"
-                            />
-                            {/* Category Badge */}
-                            <div className="absolute top-2 left-2">
-                              <span className="inline-block bg-gradient-to-r from-gfx-teal to-gfx-blue text-white inter-font font-bold px-2.5 py-1 rounded-full text-xs uppercase tracking-wider shadow-lg">
-                                {project.category}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          {/* Thumbnail Navigation - Smaller */}
-                          <div className="absolute bottom-1.5 left-1.5 right-1.5 thumbnail-grid opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                            {project.images.map((img, idx) => (
-                              <div
-                                key={idx}
-                                onClick={() => setSelectedImage(idx)}
-                                className={`thumbnail-item image-container aspect-video rounded-sm overflow-hidden ${
-                                  (selectedImage || 0) === idx ? 'active' : ''
-                                }`}
-                              >
-                                <img
-                                  src={img}
-                                  alt={`Thumbnail ${idx + 1}`}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
+          <div ref={carouselRef} className="mb-14">
 
-                        {/* Content Section - Scrollable */}
-                        <div className="p-4 overflow-y-auto max-h-[280px]">
-                          <div className="space-y-2.5">
-                            {/* Title */}
-                            <div>
-                              <h3 className="rajdhani-font text-gfx-white text-xl lg:text-2xl font-bold mb-0.5">
-                                {project.name}
-                              </h3>
-                              <p className="inter-font text-gfx-teal text-xs font-semibold mb-1.5">
-                                {project.tagline}
-                              </p>
-                            </div>
+            {/* Progress */}
+            <div className="mb-5 px-1">
+              <ProgressBar isPlaying={playing} duration={AUTOPLAY_MS} resetKey={progKey} onComplete={next} />
+            </div>
 
-                            {/* Description */}
-                            <p className="inter-font text-gfx-white/70 text-xs leading-relaxed">
-                              {project.description}
-                            </p>
+            {/* Card */}
+            <div className="port-card rounded-3xl p-6 lg:p-10 overflow-hidden">
+              <div className="grid lg:grid-cols-[1fr_1fr] gap-8 lg:gap-12">
 
-                            {/* Highlights */}
-                            <div>
-                              <h4 className="inter-font text-gfx-white text-xs font-bold uppercase tracking-wider mb-1.5">
-                                Key Features
-                              </h4>
-                              <ul className="space-y-1">
-                                {project.highlights.map((highlight, idx) => (
-                                  <li key={idx} className="flex items-start gap-1.5">
-                                    <svg className="w-3 h-3 text-gfx-teal flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                    <span className="inter-font text-gfx-white/75 text-xs leading-relaxed">
-                                      {highlight}
-                                    </span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
+                {/* LEFT — imagery */}
+                <div className="card-img-col flex flex-col gap-4">
 
-                            {/* Tags */}
-                            <div className="flex flex-wrap gap-1">
-                              {project.tags.map((tag, idx) => (
-                                <span
-                                  key={idx}
-                                  className="inter-font text-gfx-white/80 text-xs font-medium px-2 py-0.5 rounded bg-gfx-white/5 border border-gfx-teal/20"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
+                  {/* Main image */}
+                  <div className="relative rounded-2xl overflow-hidden aspect-video shadow-2xl"
+                    style={{ boxShadow:'0 24px 56px rgba(0,0,0,0.45)' }}>
+                    <img src={cur.images[imgIdx]} alt={`${cur.name} screenshot`} className="main-img" />
+                    {/* Category badge */}
+                    <div className="absolute top-3 left-3">
+                      <span className="cat-badge inter-font text-gfx-white font-semibold text-xs uppercase tracking-widest px-3 py-1 rounded-full">
+                        {cur.category}
+                      </span>
+                    </div>
+                    {/* Live link */}
+                    {cur.liveUrl && (
+                      <a href={cur.liveUrl} target="_blank" rel="noopener noreferrer"
+                        className="absolute top-3 right-3 cat-badge text-gfx-teal px-3 py-1 rounded-full flex items-center gap-1.5 inter-font font-semibold text-xs hover:border-gfx-teal transition-colors">
+                        <ExternalLink className="w-3 h-3" />
+                        Live Site
+                      </a>
+                    )}
+                  </div>
 
-                            {/* Stats Grid - Compact */}
-                            <div className="grid grid-cols-3 gap-1.5 pt-1.5">
-                              <div className="text-center p-1.5 rounded-lg bg-gfx-teal/10 border border-gfx-teal/20">
-                                <div className="rajdhani-font text-gfx-teal text-base font-bold">
-                                  {project.stats.pages}
-                                </div>
-                                <div className="inter-font text-gfx-white/60 text-xs uppercase">
-                                  Pages
-                                </div>
-                              </div>
-                              <div className="text-center p-1.5 rounded-lg bg-gfx-teal/10 border border-gfx-teal/20">
-                                <div className="rajdhani-font text-gfx-teal text-xs font-bold">
-                                  {project.stats.timeline}
-                                </div>
-                                <div className="inter-font text-gfx-white/60 text-xs uppercase">
-                                  Time
-                                </div>
-                              </div>
-                              <div className="text-center p-1.5 rounded-lg bg-gfx-teal/10 border border-gfx-teal/20">
-                                <div className="rajdhani-font text-gfx-teal text-xs font-bold">
-                                  {project.stats.package}
-                                </div>
-                                <div className="inter-font text-gfx-white/60 text-xs uppercase">
-                                  Tier
-                                </div>
-                              </div>
-                            </div>
+                  {/* Thumbnails */}
+                  <div className="flex gap-3">
+                    {cur.images.map((img, ii) => (
+                      <button
+                        key={ii}
+                        onClick={() => setImgIdx(ii)}
+                        className={`thumb ${ii === imgIdx ? 't-active' : ''}`}
+                        style={{ animationDelay: `${ii * 0.08}s` }}
+                      >
+                        <img src={img} alt={`View ${ii + 1}`} />
+                      </button>
+                    ))}
+                    <div className="flex-1" /> {/* spacer */}
+                  </div>
 
-                            {/* CTA Button */}
-                            <button className="w-full group relative overflow-hidden bg-gradient-to-r from-gfx-teal to-gfx-blue hover:from-gfx-blue hover:to-gfx-teal text-gfx-white inter-font font-bold px-3 py-2 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl hover:shadow-gfx-teal/50 border border-gfx-teal/30">
-                              <span className="relative z-10 flex items-center justify-center gap-1.5 text-xs">
-                                View Project
-                                <svg className="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                                </svg>
-                              </span>
-                              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                            </button>
-                          </div>
-                        </div>
+                  {/* Stat chips row */}
+                  <div className="flex gap-3 flex-wrap">
+                    <div className="stat-chip rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-1">
+                      <FileText className="w-4 h-4 text-gfx-teal flex-shrink-0" />
+                      <div>
+                        <p className="inter-font text-gfx-white/45 text-[10px] uppercase tracking-widest">Pages</p>
+                        <p className="rajdhani-font text-gfx-white font-bold text-lg leading-none">{cur.stats.pages}</p>
+                      </div>
+                    </div>
+                    <div className="stat-chip rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-1">
+                      <Clock className="w-4 h-4 text-gfx-teal flex-shrink-0" />
+                      <div>
+                        <p className="inter-font text-gfx-white/45 text-[10px] uppercase tracking-widest">Timeline</p>
+                        <p className="rajdhani-font text-gfx-white font-bold text-lg leading-none">{cur.stats.timeline}</p>
+                      </div>
+                    </div>
+                    <div className="stat-chip rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-1"
+                      style={{ background: pkg.bg, borderColor: pkg.border }}>
+                      <Package className="w-4 h-4 flex-shrink-0" style={{ color: pkg.text }} />
+                      <div>
+                        <p className="inter-font text-gfx-white/45 text-[10px] uppercase tracking-widest">Package</p>
+                        <p className="rajdhani-font font-bold text-lg leading-none" style={{ color: pkg.text }}>{cur.stats.package}</p>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-
-              {/* Navigation Arrows */}
-              <button
-                onClick={prevSlide}
-                className="nav-button absolute left-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gfx-white/10 border border-gfx-teal/30 flex items-center justify-center text-gfx-white hover:bg-gfx-teal/20 z-10"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path>
-                </svg>
-              </button>
-              <button
-                onClick={nextSlide}
-                className="nav-button absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gfx-white/10 border border-gfx-teal/30 flex items-center justify-center text-gfx-white hover:bg-gfx-teal/20 z-10"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </button>
-            </div>
-
-            {/* Dot Indicators */}
-            <div className="flex justify-center gap-2 mb-12">
-              {projects.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className={`dot-indicator w-2 h-2 rounded-full transition-all ${
-                    currentSlide === index
-                      ? 'active w-8'
-                      : 'bg-gfx-white/20 hover:bg-gfx-white/40'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Grid View */}
-        {viewMode === 'grid' && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 animate-fade-in-up delay-100" style={{ opacity: 0 }}>
-            {projects.map((project, index) => (
-              <div
-                key={project.id}
-                className="portfolio-card rounded-2xl overflow-hidden group cursor-pointer hover:scale-105 transition-all duration-500"
-              >
-                {/* Image */}
-                <div className="image-container aspect-video">
-                  <img
-                    src={project.images[0]}
-                    alt={project.name}
-                    className="screenshot-thumbnail"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                    <button className="w-full bg-gradient-to-r from-gfx-teal to-gfx-blue text-white inter-font font-bold py-3 rounded-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                      View Project
-                    </button>
-                  </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-6 space-y-4">
+                {/* RIGHT — info */}
+                <div className="card-info-col flex flex-col gap-5">
+
+                  {/* Title */}
                   <div>
-                    <span className="inline-block bg-gradient-to-r from-gfx-teal/20 to-gfx-blue/20 text-gfx-teal border border-gfx-teal/40 inter-font font-bold px-3 py-1 rounded-full text-xs uppercase tracking-wider mb-3">
-                      {project.category}
-                    </span>
-                    <h3 className="rajdhani-font text-gfx-white text-2xl font-bold mb-1">
-                      {project.name}
+                    <h3 className="rajdhani-font text-gfx-white text-3xl lg:text-4xl font-bold leading-tight mb-1">
+                      {cur.name}
                     </h3>
-                    <p className="inter-font text-gfx-teal text-sm font-semibold mb-2">
-                      {project.tagline}
+                    <p className="inter-font text-gfx-teal font-semibold text-sm">{cur.tagline}</p>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="h-[1px] rounded-full" style={{ background:'rgba(122,146,153,0.18)' }} />
+
+                  {/* Description */}
+                  <p className="inter-font text-gfx-white/65 text-sm lg:text-[15px] leading-relaxed">
+                    {cur.description}
+                  </p>
+
+                  {/* Highlights */}
+                  <div>
+                    <p className="inter-font text-gfx-white/45 text-[10px] uppercase tracking-widest font-semibold mb-2.5 flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-gfx-teal" />
+                      Key Features
                     </p>
-                    <p className="inter-font text-gfx-white/70 text-sm leading-relaxed line-clamp-2">
-                      {project.description}
-                    </p>
+                    <div className="flex flex-col gap-2">
+                      {cur.highlights.map((h, i) => (
+                        <div key={i} className="hl-item">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-gfx-teal flex-shrink-0 mt-0.5" />
+                          <span className="inter-font text-gfx-white/72 text-sm leading-snug">{h}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2">
-                    {project.tags.slice(0, 3).map((tag, idx) => (
-                      <span
-                        key={idx}
-                        className="inter-font text-gfx-white/80 text-xs px-2 py-1 rounded-md bg-gfx-white/5 border border-gfx-teal/20"
-                      >
-                        {tag}
+                    {cur.tags.map((t, i) => (
+                      <span key={i} className="tag-pill inter-font text-gfx-white/75 text-xs font-medium px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <Tag className="w-3 h-3 text-gfx-teal" />
+                        {t}
                       </span>
                     ))}
                   </div>
 
-                  {/* Stats */}
-                  <div className="flex justify-between items-center pt-4 border-t border-gfx-teal/20">
+                  {/* CTA buttons */}
+                  <div className="flex gap-3 mt-auto pt-2">
+                    {cur.liveUrl && (
+                      <a href={cur.liveUrl} target="_blank" rel="noopener noreferrer"
+                        className="cta-p text-white inter-font font-bold px-6 py-3 rounded-xl flex-1 flex items-center justify-center">
+                        <span className="flex items-center gap-2 text-sm">
+                          View Live Site
+                          <ExternalLink className="w-4 h-4" />
+                        </span>
+                      </a>
+                    )}
+                    <button className="cta-ghost-p text-gfx-white inter-font font-semibold px-6 py-3 rounded-xl flex-1 text-sm flex items-center justify-center gap-2">
+                      Case Study
+                      <ArrowRight className="w-4 h-4 text-gfx-teal" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Dots + play/pause */}
+            <div className="flex items-center justify-center gap-3 mt-6">
+              {projects.map((_, i) => (
+                <div key={i}
+                  onClick={() => { goTo(i); setPlaying(false); }}
+                  className={`dpill-p ${i === slide ? 'dp-on' : ''}`}
+                  style={{ width: i === slide ? 36 : 8 }}
+                />
+              ))}
+              <button onClick={() => setPlaying((p) => !p)}
+                className="nav-btn-p w-9 h-9 rounded-full flex items-center justify-center text-gfx-white ml-2">
+                {playing ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
+              </button>
+            </div>
+
+            {/* Arrow nav */}
+            <div className="flex justify-center gap-3 mt-5">
+              <button onClick={() => manual(prev)} className="nav-btn-p w-11 h-11 rounded-full flex items-center justify-center text-gfx-white">
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button onClick={() => manual(next)} className="nav-btn-p w-11 h-11 rounded-full flex items-center justify-center text-gfx-white">
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Grid View ── */}
+        {viewMode === 'grid' && (
+          <div ref={gridRef} className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-14">
+            {projects.map((proj) => (
+              <div key={proj.id} className="grid-card rounded-2xl overflow-hidden">
+                {/* Image */}
+                <div className="relative aspect-video overflow-hidden">
+                  <img src={proj.images[0]} alt={proj.name} className="gc-img" />
+                  <div className="absolute inset-0 flex flex-col justify-end p-4"
+                    style={{ background:'linear-gradient(to top, rgba(10,10,8,0.92) 0%, transparent 60%)', opacity:0, transition:'opacity 0.4s' }}
+                    onMouseEnter={e => e.currentTarget.style.opacity=1}
+                    onMouseLeave={e => e.currentTarget.style.opacity=0}
+                  >
+                    <a href={proj.liveUrl || '#'} target="_blank" rel="noopener noreferrer"
+                      className="cta-p text-white inter-font font-bold py-2 rounded-lg text-xs text-center">
+                      <span className="flex items-center justify-center gap-1.5">
+                        View Project <ExternalLink className="w-3 h-3" />
+                      </span>
+                    </a>
+                  </div>
+                  <div className="absolute top-2.5 left-2.5">
+                    <span className="cat-badge inter-font text-gfx-white font-semibold text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full">
+                      {proj.category}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-5 flex flex-col gap-3">
+                  <div>
+                    <h3 className="rajdhani-font text-gfx-white text-xl font-bold leading-tight">{proj.name}</h3>
+                    <p className="inter-font text-gfx-teal text-xs font-semibold mt-0.5">{proj.tagline}</p>
+                  </div>
+                  <p className="inter-font text-gfx-white/60 text-xs leading-relaxed line-clamp-2">{proj.description}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {proj.tags.slice(0, 3).map((t, i) => (
+                      <span key={i} className="tag-pill inter-font text-gfx-white/65 text-[10px] px-2 py-0.5 rounded-full">{t}</span>
+                    ))}
+                  </div>
+                  <div className="flex justify-between pt-3" style={{ borderTop:'1px solid rgba(122,146,153,0.14)' }}>
                     <div className="text-center">
-                      <div className="rajdhani-font text-gfx-teal text-xl font-bold">
-                        {project.stats.pages}
-                      </div>
-                      <div className="inter-font text-gfx-white/60 text-xs">Pages</div>
+                      <div className="rajdhani-font text-gfx-teal text-lg font-bold">{proj.stats.pages}</div>
+                      <div className="inter-font text-gfx-white/45 text-[10px] uppercase tracking-widest">Pages</div>
                     </div>
                     <div className="text-center">
-                      <div className="rajdhani-font text-gfx-teal text-sm font-bold">
-                        {project.stats.timeline}
-                      </div>
-                      <div className="inter-font text-gfx-white/60 text-xs">Timeline</div>
+                      <div className="rajdhani-font text-gfx-teal text-sm font-bold">{proj.stats.timeline}</div>
+                      <div className="inter-font text-gfx-white/45 text-[10px] uppercase tracking-widest">Timeline</div>
                     </div>
                     <div className="text-center">
-                      <div className="rajdhani-font text-gfx-teal text-sm font-bold">
-                        {project.stats.package}
+                      <div className="rajdhani-font text-sm font-bold" style={{ color: (pkgStyle[proj.stats.package] || pkgStyle.LAUNCH).text }}>
+                        {proj.stats.package}
                       </div>
-                      <div className="inter-font text-gfx-white/60 text-xs">Package</div>
+                      <div className="inter-font text-gfx-white/45 text-[10px] uppercase tracking-widest">Package</div>
                     </div>
                   </div>
                 </div>
@@ -646,46 +818,38 @@ const Portfolio = () => {
           </div>
         )}
 
-        {/* Bottom Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 animate-fade-in-up delay-300" style={{ opacity: 0 }}>
-          {[
-            { number: '50+', label: 'Projects Delivered', icon: '🚀' },
-            { number: '98%', label: 'Client Satisfaction', icon: '⭐' },
-            { number: '24-48h', label: 'Support Response', icon: '⚡' },
-            { number: '100%', label: 'Custom Code', icon: '💻' }
-          ].map((stat, idx) => (
-            <div key={idx} className="portfolio-card rounded-2xl p-6 text-center hover:scale-105 transition-all duration-300 shimmer">
-              <div className="text-3xl mb-2">{stat.icon}</div>
-              <div className="rajdhani-font text-gfx-teal text-3xl lg:text-4xl font-bold mb-1">
-                {stat.number}
-              </div>
-              <div className="inter-font text-gfx-white/70 text-xs lg:text-sm font-semibold">
-                {stat.label}
-              </div>
+        {/* ── Summary stats ── */}
+        <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-14">
+          {summaryStats.map((s, i) => (
+            <div key={i} className="sum-card rounded-2xl p-6 text-center">
+              <div className="rajdhani-font text-gfx-teal text-4xl lg:text-5xl font-bold mb-1.5 leading-none">{s.value}</div>
+              <div className="inter-font text-gfx-white/58 text-sm" style={{ color:'rgba(255,255,255,0.58)' }}>{s.label}</div>
             </div>
           ))}
         </div>
 
-        {/* Final CTA */}
-        <div className="text-center animate-fade-in-up delay-400" style={{ opacity: 0 }}>
-          <div className="portfolio-card rounded-3xl p-10 lg:p-16">
-            <h3 className="rajdhani-font text-gfx-white text-3xl lg:text-5xl font-bold mb-4">
-              Let's Build Something Amazing
-            </h3>
-            <p className="inter-font text-gfx-white/80 text-base lg:text-lg mb-8 max-w-2xl mx-auto">
-              Ready to transform your digital presence? Schedule a free consultation and let's discuss your vision.
-            </p>
-            <button className="relative overflow-hidden bg-gradient-to-r from-gfx-teal to-gfx-blue hover:from-gfx-blue hover:to-gfx-teal text-gfx-white inter-font font-bold px-12 py-5 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl hover:shadow-2xl hover:shadow-gfx-teal/50 group border border-gfx-teal/30">
-              <span className="relative z-10 flex items-center gap-3 text-lg">
+        {/* ── CTA block ── */}
+        <div ref={ctaRef} className="cta-block rounded-3xl p-10 lg:p-16 text-center">
+          <h3 className="rajdhani-font text-gfx-white text-3xl lg:text-5xl font-bold mb-4 leading-tight">
+            Let's Build Something Amazing
+          </h3>
+          <p className="inter-font text-gfx-white/60 text-sm lg:text-base mb-9 max-w-2xl mx-auto leading-relaxed">
+            Ready to transform your digital presence? Schedule a free consultation and let's discuss how we can bring your vision to life.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button className="cta-p text-white inter-font font-bold px-10 py-4 rounded-xl shadow-xl">
+              <span className="flex items-center gap-3 text-[15px]">
                 Start Your Project Today
-                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                </svg>
+                <ArrowRight className="w-5 h-5" />
               </span>
-              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+            </button>
+            <button className="cta-ghost-p text-gfx-white inter-font font-semibold px-10 py-4 rounded-xl text-[15px] flex items-center gap-3">
+              View All Work
+              <ArrowRight className="w-4 h-4 text-gfx-teal" />
             </button>
           </div>
         </div>
+
       </div>
     </section>
   );
