@@ -294,7 +294,8 @@ const Navbar = () => {
         /* Shell */
         .nav-shell {
           display:flex; align-items:center; justify-content:space-between;
-          padding:14px 32px; position:sticky; top:0; z-index:1000;
+          padding:8px 32px; position:sticky; top:0; z-index:1000;
+          background: transparent;
           animation:nav-enter 0.70s cubic-bezier(0.34,1.4,0.64,1) both;
           transition:background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
         }
@@ -424,7 +425,7 @@ const Navbar = () => {
       <nav className={`nav-shell ${scrolled ? 'scrolled' : ''}`}>
 
         {/* Logo */}
-        <img className="nav-logo" src={logo} alt="4700 GFX Studios" style={{height:'auto',width:120}}
+        <img className="nav-logo" src={logo} alt="4700 GFX Studios" style={{height:'auto',width:108}}
           onClick={() => handleNavClick('home')} />
 
         {/* Desktop pill */}
