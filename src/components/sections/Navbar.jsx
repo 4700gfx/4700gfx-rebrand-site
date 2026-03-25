@@ -209,7 +209,6 @@ const ContactModal = ({ isOpen, onClose }) => {
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState('home')
   const [isModalOpen,   setIsModalOpen]   = useState(false)
-  const [scrolled,      setScrolled]      = useState(false)
   const [mobileOpen,    setMobileOpen]    = useState(false)
   const indicatorRef = useRef(null)
   const itemRefs     = useRef({})
@@ -224,18 +223,22 @@ const Navbar = () => {
   ]
 
   const socialLinks = [
-    { icon:Facebook,  href:'https://facebook.com',  label:'Facebook'  },
-    { icon:Instagram, href:'https://instagram.com', label:'Instagram' },
-    { icon:Twitter,   href:'https://twitter.com',   label:'Twitter'   },
+    { 
+      icon:Facebook,  
+      href:'https://www.facebook.com/people/4700-GFX-Studios/61580859150471/',  
+      label:'Facebook'  
+    },
+    { 
+      icon:Instagram, 
+      href:'https://www.instagram.com/4700gfx/', 
+      label:'Instagram' 
+    },
+    { icon:Twitter,   
+      href:'https://twitter.com',   
+      label:'Twitter'   
+    },
     { icon:Linkedin,  href:'https://linkedin.com',  label:'LinkedIn'  },
   ]
-
-  // Scroll detection
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', fn, { passive:true })
-    return () => window.removeEventListener('scroll', fn)
-  }, [])
 
   // IntersectionObserver — highlight active section
   useEffect(() => {
@@ -297,13 +300,6 @@ const Navbar = () => {
           padding:8px 32px; position:sticky; top:0; z-index:1000;
           background: transparent;
           animation:nav-enter 0.70s cubic-bezier(0.34,1.4,0.64,1) both;
-          transition:background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-        }
-        .nav-shell.scrolled {
-          background:rgba(10,10,8,0.88) !important;
-          backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
-          border-bottom:1px solid rgba(122,146,153,0.16);
-          box-shadow:0 8px 32px rgba(0,0,0,0.38);
         }
 
         /* Logo */
@@ -324,7 +320,7 @@ const Navbar = () => {
           animation:items-enter 0.80s cubic-bezier(0.34,1.2,0.64,1) 0.2s both;
           transition:border-color 0.4s, background 0.4s;
         }
-        .scrolled .nav-pill { background:rgba(122,146,153,0.08); border-color:rgba(122,146,153,0.22); }
+
 
         /* Sliding pill indicator */
         .nav-indicator {
@@ -356,7 +352,7 @@ const Navbar = () => {
           animation:right-enter 0.80s cubic-bezier(0.34,1.2,0.64,1) 0.25s both;
           transition:border-color 0.4s, background 0.4s;
         }
-        .scrolled .social-cluster { background:rgba(122,146,153,0.08); border-color:rgba(122,146,153,0.22); }
+
         .soc-icon { color:rgba(255,255,255,0.58); transition:all 0.28s cubic-bezier(0.34,1.4,0.64,1); }
         .soc-icon:hover { color:#7A9299; transform:scale(1.22) translateY(-2px); }
 
@@ -422,7 +418,7 @@ const Navbar = () => {
       </div>
 
       {/* ── Main nav ── */}
-      <nav className={`nav-shell ${scrolled ? 'scrolled' : ''}`}>
+      <nav className={'nav-shell'}>
 
         {/* Logo */}
         <img className="nav-logo" src={logo} alt="4700 GFX Studios" style={{height:'auto',width:108}}

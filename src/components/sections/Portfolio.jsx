@@ -17,6 +17,7 @@ import nailCanvas3      from '../images/the-nail-canvas-benefits.png';
 import mohScreenshot1   from '../images/moh-testimony.png';
 import mohScreenshot2   from '../images/moh-services.png';
 import mohScreenshot3   from '../images/moh-faq-footer.png';
+import zubarScreenshot from '../../components/images/zubar-hero.png'
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,10 +28,10 @@ const projects = [
   {
     id: 1,
     name: '4700 Enterprises',
-    category: 'Corporate',
-    tagline: 'Multi-Service Enterprise Platform',
+    category: 'Music & Media',
+    tagline: 'Full Record Label Relaunch',
     description:
-      'A comprehensive corporate website showcasing multiple service divisions, team profiles, and detailed service offerings. Built with modern React architecture and custom animations to create an engaging, conversion-focused experience.',
+      'A comprehensive media and music website showcasing multiple sections, divisions, team profiles, and detailed service offerings. Built with modern React architecture and custom animations to create an engaging, conversion-focused experience.',
     highlights: [
       'Custom-coded multi-page architecture with seamless navigation',
       'Team member profiles with dynamic filtering capabilities',
@@ -89,20 +90,18 @@ const projects = [
   },
   {
     id: 4,
-    name: 'Elite Fitness Studio',
-    category: 'Health & Fitness',
-    tagline: 'Premium Fitness & Wellness Hub',
+    name: 'Co-Working Space & Night Lounge',
+    category: 'Hospitality & Tourism',
+    tagline: 'ZuBar: The New Lounge in South Florida',
     description:
-      'Dynamic fitness studio website featuring class schedules, trainer profiles, membership plans, and an online booking system. Built to inspire and motivate with energetic design elements and a seamless member experience.',
+      'Dynamic lounge landing page featuring video pop ups, subscriptions, and a contact form for leads. Built to inspire and motivate with energetic design elements and a seamless and scaleable experience.',
     highlights: [
-      'Interactive class schedule with real-time availability',
-      'Trainer profiles with specialisations and credentials',
-      'Flexible membership tier comparison with pricing calculator',
-      'Integrated booking system with calendar synchronisation',
-      'Progress tracking dashboard for member achievements',
+      'Simple, Sleek Sections with Custom Fonts',
+      'Updated Strategic Pop Ups for Increase User Interaction',
+      'Intitutive Contact Form for Seemless Lead Generation',
     ],
     tags: ['Fitness', 'Booking', 'Membership', 'Wellness'],
-    images: [labelScreenshot, nailCanvas1, mohScreenshot1],
+    images: [zubarScreenshot],
     stats: { pages: '7', timeline: '5 weeks', package: 'GROWTH' },
     liveUrl: null,
     accentFrom: '#8A9AA0',
