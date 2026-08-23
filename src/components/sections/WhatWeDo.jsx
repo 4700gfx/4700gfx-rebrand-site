@@ -109,8 +109,11 @@ const ProgressBar = ({ isPlaying, duration, resetKey, onComplete }) => {
   return (
     <div className="h-[3px] w-full rounded-full overflow-hidden" style={{ background: 'rgba(122,146,153,0.15)' }}>
       <div
-        className="h-full rounded-full"
-        style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#7A9299,#4A6572)', transition: 'width 0.04s linear' }}
+        className="h-full w-full rounded-full"
+        style={{
+          transform: `scaleX(${pct / 100})`, transformOrigin: 'left',
+          background: 'linear-gradient(90deg,#7A9299,#4A6572)', transition: 'transform 0.04s linear',
+        }}
       />
     </div>
   );
@@ -119,7 +122,7 @@ const ProgressBar = ({ isPlaying, duration, resetKey, onComplete }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
-const WhatWeDo = () => {
+const WhatWeDo = ({ onOpenContact }) => {
   const [slide,   setSlide]   = useState(0);
   const [playing, setPlaying] = useState(true);
   const [progKey, setProgKey] = useState(0);
@@ -337,11 +340,12 @@ const WhatWeDo = () => {
 
         /* Dots */
         .dpill {
-          height:8px; border-radius:4px;
+          height:8px; border-radius:4px; border:none; padding:0;
           background:rgba(255,255,255,0.18);
           cursor:pointer;
           transition:all .4s cubic-bezier(.4,0,.2,1);
         }
+        .dpill:focus-visible { outline:2px solid #7A9299; outline-offset:2px; }
         .dpill:hover { background:rgba(122,146,153,0.50); }
         .dpill.on {
           background:linear-gradient(90deg,#7A9299,#4A6572)!important;
@@ -468,7 +472,7 @@ const WhatWeDo = () => {
                               {svc.description}
                             </p>
                           </div>
-                          <button className="learn self-start">
+                          <button onClick={onOpenContact} className="learn self-start">
                             Learn More
                             <ArrowRight className="c-arrow w-3.5 h-3.5" />
                           </button>
@@ -506,12 +510,13 @@ const WhatWeDo = () => {
         {/* ── Dots + play/pause ── */}
         <div className="flex items-center justify-center gap-3 mt-8 mb-16">
           {Array.from({ length: TOTAL }).map((_, i) => (
-            <div
+            <button
               key={i}
               onClick={() => { goTo(i); setPlaying(false); }}
               className={`dpill ${i === slide ? 'on' : ''}`}
               style={{ width: i === slide ? 36 : 8 }}
               aria-label={`Slide ${i + 1}`}
+              aria-current={i === slide ? 'true' : undefined}
             />
           ))}
           <button
@@ -537,7 +542,7 @@ const WhatWeDo = () => {
               <ArrowRight className="w-5 h-5" />
             </span>
           </button>
-          <p className="inter-font text-xs mt-4" style={{ color: 'rgba(255,255,255,0.28)' }}>
+          <p className="inter-font text-xs mt-4" style={{ color: 'rgba(255,255,255,0.45)' }}>
             No commitment required &nbsp;·&nbsp; Response within 24 hours
           </p>
         </div>

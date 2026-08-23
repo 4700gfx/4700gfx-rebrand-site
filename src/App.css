@@ -36,3 +36,22 @@ h1 > h6 {
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
 }
+
+/* Respect prefers-reduced-motion sitewide: floor decorative CSS
+   animations/transitions (shimmer text, floating logo, pinging badges,
+   parallax orbs, Ken Burns zooms) to near-instant. Genuine in-progress
+   indicators (e.g. the contact-form submit spinner) opt back in via
+   [data-motion-preserve]. GSAP-driven scroll entrances are unaffected by
+   this rule; they already run once and settle. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-motion-preserve] {
+    animation-duration: revert !important;
+    animation-iteration-count: revert !important;
+  }
+}

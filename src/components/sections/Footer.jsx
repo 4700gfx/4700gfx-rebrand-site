@@ -234,12 +234,13 @@ const Footer = ({ onOpenModal }) => {
         }
         .foot-link::after {
           content:''; position:absolute; bottom:0; left:0;
-          width:0; height:1px;
+          width:100%; height:1px;
           background:linear-gradient(90deg,#7A9299,#4A6572);
-          transition:width 0.28s ease;
+          transform:scaleX(0); transform-origin:left;
+          transition:transform 0.28s ease;
         }
         .foot-link:hover { color:#7A9299; transform:translateX(4px); }
-        .foot-link:hover::after { width:100%; }
+        .foot-link:hover::after { transform:scaleX(1); }
 
         /* Social icons */
         .foot-social {
@@ -461,7 +462,7 @@ const Footer = ({ onOpenModal }) => {
                 </button>
               </form>
 
-              <p className="inter-font" style={{color:'rgba(255,255,255,0.30)',fontSize:11,marginTop:10}}>
+              <p className="inter-font" style={{color:'rgba(255,255,255,0.48)',fontSize:11,marginTop:10}}>
                 We respect your privacy. Unsubscribe anytime.
               </p>
 
@@ -509,7 +510,7 @@ const Footer = ({ onOpenModal }) => {
         {/* ── Extra bar ── */}
         <div ref={extraBarRef} style={{borderTop:'1px solid rgba(122,146,153,0.10)',padding:'16px 5%'}}>
           <div style={{maxWidth:1280,margin:'0 auto',display:'flex',flexWrap:'wrap',alignItems:'center',justifyContent:'space-between',gap:12}}>
-            <p className="inter-font" style={{color:'rgba(255,255,255,0.35)',fontSize:11}}>
+            <p className="inter-font" style={{color:'rgba(255,255,255,0.50)',fontSize:11}}>
               Certified Minority Business Enterprise (MBE) &nbsp;·&nbsp; Woman-Owned Business &nbsp;·&nbsp; LGBTQ+ Friendly
             </p>
             <div style={{display:'flex',alignItems:'center',gap:12}}>

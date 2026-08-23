@@ -289,12 +289,14 @@ const FAQ = () => {
         }
         .faq-q-btn:hover { background:rgba(122,146,153,0.06); }
 
-        /* Answer collapse */
+        /* Answer collapse — grid-rows trick avoids animating a layout
+           property directly, and doesn't need a guessed max-height cap */
         .faq-ans {
-          max-height:0; overflow:hidden;
-          transition: max-height 0.52s cubic-bezier(0.4,0,0.2,1);
+          display:grid; grid-template-rows:0fr; overflow:hidden;
+          transition: grid-template-rows 0.52s cubic-bezier(0.4,0,0.2,1);
         }
-        .faq-ans.ans-open { max-height:600px; }
+        .faq-ans.ans-open { grid-template-rows:1fr; }
+        .faq-ans > div { overflow:hidden; min-height:0; }
 
         /* Chevron */
         .faq-chev {
@@ -359,12 +361,13 @@ const FAQ = () => {
         }
         .contact-link::after {
           content:''; position:absolute;
-          bottom:-2px; left:0; width:0; height:1px;
+          bottom:-2px; left:0; width:100%; height:1px;
           background: linear-gradient(90deg,#7A9299,#4A6572);
-          transition:width 0.3s;
+          transform:scaleX(0); transform-origin:left;
+          transition:transform 0.3s;
         }
         .contact-link:hover { color:#7A9299; }
-        .contact-link:hover::after { width:100%; }
+        .contact-link:hover::after { transform:scaleX(1); }
 
         /* Empty state */
         .empty-state {

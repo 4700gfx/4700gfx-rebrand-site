@@ -7,6 +7,7 @@ import {
   Clock, FileText, Package, CheckCircle2,
   Pause, Play, Tag, BookOpen,
 } from 'lucide-react';
+import CaseStudyModal from './CaseStudyModal';
 
 import labelScreenshot  from '../images/4700enterprises.png';
 import labelScreenshot2 from '../images/4700enterprises-team.png';
@@ -24,7 +25,7 @@ gsap.registerPlugin(ScrollTrigger);
 // ─────────────────────────────────────────────────────────────────────────────
 // Data
 // ─────────────────────────────────────────────────────────────────────────────
-export const projects = [
+const projects = [
   {
     id: 1,
     slug: '4700-enterprises',
@@ -32,7 +33,7 @@ export const projects = [
     category: 'Music & Media',
     tagline: 'Full Record Label Relaunch',
     description:
-      'A comprehensive media and music website showcasing multiple sections, divisions, team profiles, and detailed service offerings. Built with modern React architecture and custom animations to create an engaging, conversion-focused experience.',
+      "A full relaunch of 4700 Enterprises' web presence — eight custom-coded pages spanning team profiles, division pages, and service showcases, built with modern React architecture and layered animation work. Delivered in six weeks under our GROWTH package, taking the label from page three of Google search results to a #1 ranking for its key search terms.",
     highlights: [
       'Custom-coded multi-page architecture with seamless navigation',
       'Team member profiles with dynamic filtering capabilities',
@@ -58,7 +59,7 @@ export const projects = [
     category: 'Beauty & Wellness',
     tagline: 'Premium Nail Salon Experience',
     description:
-      'Elegant salon website featuring services, testimonials, and a booking-integrated gallery showcase. Designed to reflect the luxury and artistry of premium nail services with stunning visuals and silky smooth interactions.',
+      'An elegant, mobile-first salon website built around services, testimonials, and a booking-integrated gallery — designed to reflect the luxury and artistry of premium nail services with stunning visuals and silky-smooth interactions. Delivered as a 5-page ELEVATE build in four weeks, replacing manual phone bookings with a 24/7 online booking system.',
     highlights: [
       'Stunning hero section with professional photography',
       'Service catalog with detailed pricing and descriptions',
@@ -84,7 +85,7 @@ export const projects = [
     category: 'Healthcare',
     tagline: 'Healthcare Consulting Platform',
     description:
-      'Professional service website with testimonials, detailed service pages, a comprehensive FAQ section, and contact integration. Designed to build trust and credibility in the healthcare consulting space with clean, authoritative aesthetics.',
+      'A 6-page healthcare consulting platform built around trust and credibility — testimonials, detailed service pages, a comprehensive FAQ section, and secure contact integration, wrapped in a clean, authoritative aesthetic. Delivered as an ELEVATE build in five weeks, replacing inconsistent website traffic with a steady, professional digital front door.',
     highlights: [
       'Trust-building testimonials section with video integration',
       'Comprehensive service pages with detailed explanations',
@@ -110,7 +111,7 @@ export const projects = [
     category: 'Hospitality',
     tagline: 'The New Lounge in South Florida',
     description:
-      'Dynamic co-working space and night lounge landing page featuring video pop-ups, newsletter subscriptions, and a strategic contact form for lead generation. Built to inspire with energetic design elements and a seamless scalable experience.',
+      "A single-page LAUNCH build for ZuBar South Florida's lounge and event space — video pop-ups, newsletter capture, and a strategic contact form for lead generation, wrapped in energetic, brand-aligned design. Delivered in four weeks, replacing a generic site with low engagement with a landing page built specifically to convert.",
     highlights: [
       'Sleek sections with custom brand-aligned fonts',
       'Strategic pop-ups for increased user interaction',
@@ -138,7 +139,7 @@ const summaryStats = [
   { value: '5.0★',  label: 'Average Rating'      },
 ];
 
-const AUTOPLAY_MS = 6000;
+const AUTOPLAY_MS = 5000;
 
 const pkgStyle = {
   LAUNCH:  { bg: 'rgba(122,146,153,0.15)', border: 'rgba(122,146,153,0.4)',  text: '#7A9299' },
@@ -173,8 +174,8 @@ const ProgressBar = ({ isPlaying, duration, resetKey, onComplete }) => {
 
   return (
     <div className="h-[3px] w-full rounded-full overflow-hidden" style={{ background:'rgba(122,146,153,0.15)' }}>
-      <div className="h-full rounded-full"
-        style={{ width:`${pct}%`, background:'linear-gradient(90deg,#7A9299,#4A6572)', transition:'width 0.04s linear' }} />
+      <div className="h-full w-full rounded-full"
+        style={{ transform:`scaleX(${pct / 100})`, transformOrigin:'left', background:'linear-gradient(90deg,#7A9299,#4A6572)', transition:'transform 0.04s linear' }} />
     </div>
   );
 };
@@ -182,13 +183,14 @@ const ProgressBar = ({ isPlaying, duration, resetKey, onComplete }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Portfolio
 // ─────────────────────────────────────────────────────────────────────────────
-const Portfolio = ({ onOpenCaseStudy }) => {
+const Portfolio = ({ onOpenContact }) => {
   const [viewMode, setViewMode] = useState('carousel');
   const [slide,    setSlide]    = useState(0);
   const [imgIdx,   setImgIdx]   = useState(0);
   const [playing,  setPlaying]  = useState(true);
   const [progKey,  setProgKey]  = useState(0);
   const [cardKey,  setCardKey]  = useState(0);
+  const [caseStudySlug, setCaseStudySlug] = useState(null);
 
   const sectionRef  = useRef(null);
   const badgeRef    = useRef(null);
@@ -267,29 +269,58 @@ const Portfolio = ({ onOpenCaseStudy }) => {
     return () => ctx.revert();
   }, []);
 
-  // Card slide-in on change
+  // Card slide-in on change, with an internal stagger for the info column
   useEffect(() => {
     if (!carouselRef.current) return;
     const left  = carouselRef.current.querySelector('.card-img-col');
     const right = carouselRef.current.querySelector('.card-info-col');
-    if (left)  gsap.fromTo(left,  { x:-40, opacity:0 }, { x:0, opacity:1, duration:0.55, ease:'power3.out' });
-    if (right) gsap.fromTo(right, { x:40,  opacity:0 }, { x:0, opacity:1, duration:0.55, ease:'power3.out', delay:0.07 });
+    if (left)  gsap.fromTo(left,  { x:-30, opacity:0 }, { x:0, opacity:1, duration:0.40, ease:'power3.out' });
+    if (right) {
+      gsap.fromTo(right, { x:30, opacity:0 }, { x:0, opacity:1, duration:0.40, ease:'power3.out', delay:0.04 });
+      const rows = right.querySelectorAll('.hl-item, .tag-pill, .result-chip');
+      if (rows.length) {
+        gsap.fromTo(rows,
+          { y:10, opacity:0 },
+          { y:0, opacity:1, duration:0.30, stagger:0.02, ease:'power2.out', delay:0.10 }
+        );
+      }
+    }
   }, [cardKey]);
+
+  // Main screenshot crossfades when the slide or thumbnail changes.
+  // Opacity only — the continuous Ken Burns zoom already owns `transform`,
+  // and animating both from two different places fights every frame.
+  useEffect(() => {
+    const img = carouselRef.current?.querySelector('.main-img');
+    if (img) gsap.fromTo(img, { opacity:0 }, { opacity:1, duration:0.30, ease:'power2.out' });
+  }, [cardKey, imgIdx]);
 
   useEffect(() => {
     if (viewMode !== 'grid' || !gridRef.current) return;
     const cards = gridRef.current.querySelectorAll('.grid-card');
     gsap.fromTo(cards,
-      { y:50, opacity:0, scale:0.93 },
-      { y:0, opacity:1, scale:1, duration:0.6, stagger:0.09, ease:'power3.out' }
+      { y:40, opacity:0, scale:0.95 },
+      { y:0, opacity:1, scale:1, duration:0.45, stagger:0.06, ease:'power3.out' }
     );
+  }, [viewMode]);
+
+  // Give the carousel a matching entrance when switching back to it —
+  // skip the very first mount, since the scroll-triggered entrance above
+  // already handles that case. Animates the plain wrapper, not .port-card
+  // itself — that element has backdrop-filter, and transform-animating an
+  // element with backdrop-filter forces an expensive re-blur every frame.
+  const hasMountedRef = useRef(false);
+  useEffect(() => {
+    if (!hasMountedRef.current) { hasMountedRef.current = true; return; }
+    if (viewMode !== 'carousel' || !carouselRef.current) return;
+    gsap.fromTo(carouselRef.current, { y:20, opacity:0 }, { y:0, opacity:1, duration:0.45, ease:'power3.out' });
   }, [viewMode]);
 
   return (
     <section ref={sectionRef} id="portfolio" className="py-20 lg:py-32 relative overflow-hidden">
       <style>{`
         @keyframes sh-port { 0%{background-position:-200% center}100%{background-position:200% center} }
-        @keyframes img-ken  { 0%{transform:scale(1)}100%{transform:scale(1.06)} }
+        @keyframes img-ken  { 0%{transform:scale(1)}100%{transform:scale(1.05)} }
         @keyframes thumb-in { from{opacity:0;transform:translateY(8px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)} }
 
         .acc-port{background:linear-gradient(90deg,#7A9299 0%,#fff 35%,#4A6572 60%,#7A9299 100%);background-size:250% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:sh-port 4.5s linear infinite}
@@ -298,9 +329,9 @@ const Portfolio = ({ onOpenCaseStudy }) => {
         .view-btn{background:transparent;border:1px solid transparent;transition:all 0.3s ease;color:rgba(255,255,255,0.50)}
         .view-btn.v-active{background:rgba(122,146,153,0.15);border-color:rgba(122,146,153,0.45);color:#ffffff;box-shadow:0 4px 16px rgba(74,101,114,0.22)}
         .view-btn:hover:not(.v-active){color:rgba(255,255,255,0.80)}
-        .port-card{background:linear-gradient(145deg,rgba(122,146,153,0.09) 0%,rgba(10,10,8,0.60) 100%);border:1px solid rgba(122,146,153,0.20);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);position:relative;overflow:hidden}
+        .port-card{background:linear-gradient(145deg,rgba(122,146,153,0.09) 0%,rgba(10,10,8,0.60) 100%);border:1px solid rgba(122,146,153,0.20);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);position:relative;overflow:hidden}
         .port-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(122,146,153,0.55),rgba(74,101,114,0.55),transparent)}
-        .main-img{width:100%;height:100%;object-fit:cover;animation:img-ken 8s ease-in-out alternate infinite}
+        .main-img{width:100%;height:100%;object-fit:cover;animation:img-ken 3.5s ease-in-out alternate infinite;will-change:transform;backface-visibility:hidden}
         .thumb{flex-shrink:0;width:72px;height:52px;border-radius:8px;overflow:hidden;border:2px solid rgba(122,146,153,0.20);cursor:pointer;transition:all 0.3s ease;animation:thumb-in 0.4s ease both}
         .thumb:hover{border-color:rgba(122,146,153,0.60);transform:scale(1.06)}
         .thumb.t-active{border-color:#7A9299;box-shadow:0 0 12px rgba(122,146,153,0.45)}
@@ -314,8 +345,9 @@ const Portfolio = ({ onOpenCaseStudy }) => {
         .stat-chip:hover{background:rgba(122,146,153,0.16);border-color:rgba(122,146,153,0.40);transform:translateY(-2px)}
         .nav-btn-p{background:rgba(122,146,153,0.09);border:1px solid rgba(122,146,153,0.26);backdrop-filter:blur(8px);transition:all 0.3s ease}
         .nav-btn-p:hover{background:rgba(122,146,153,0.22);border-color:rgba(122,146,153,0.60);transform:scale(1.12);box-shadow:0 8px 28px rgba(74,101,114,.32)}
-        .dpill-p{height:8px;border-radius:4px;background:rgba(255,255,255,0.18);cursor:pointer;transition:all 0.4s cubic-bezier(.4,0,.2,1)}
+        .dpill-p{height:8px;border-radius:4px;border:none;padding:0;background:rgba(255,255,255,0.18);cursor:pointer;transition:all 0.4s cubic-bezier(.4,0,.2,1)}
         .dpill-p:hover{background:rgba(122,146,153,0.50)}
+        .dpill-p:focus-visible{outline:2px solid #7A9299;outline-offset:2px}
         .dpill-p.dp-on{background:linear-gradient(90deg,#7A9299,#4A6572)!important;box-shadow:0 2px 12px rgba(74,101,114,.45)}
         .cta-p{background:linear-gradient(135deg,#7A9299 0%,#4A6572 100%);border:1px solid rgba(122,146,153,0.28);transition:all 0.35s ease;position:relative;overflow:hidden}
         .cta-p::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.11),transparent);opacity:0;transition:opacity 0.35s}
@@ -341,7 +373,7 @@ const Portfolio = ({ onOpenCaseStudy }) => {
         .result-chip{background:rgba(122,146,153,0.08);border:1px solid rgba(122,146,153,0.18);border-radius:12px;padding:10px 14px;text-align:center;transition:all 0.3s ease}
         .result-chip:hover{background:rgba(122,146,153,0.16);border-color:rgba(122,146,153,0.38);transform:translateY(-3px)}
 
-        .orb-p{position:absolute;border-radius:50%;pointer-events:none;filter:blur(72px)}
+        .orb-p{position:absolute;border-radius:50%;pointer-events:none;filter:blur(50px)}
         .gsap-w{display:inline-block}
       `}</style>
 
@@ -371,7 +403,7 @@ const Portfolio = ({ onOpenCaseStudy }) => {
           </h2>
           <div ref={ruleRef} className="sh-rule-p h-[2px] w-24 rounded-full mx-auto mb-6" />
           <p ref={subRef} className="inter-font text-gfx-white/60 text-base lg:text-[17px] max-w-2xl mx-auto mb-8">
-            Transforming visions into digital excellence. Every project is custom-coded, conversion-focused, and built to last.
+            Real businesses, real transformations. Every project below is custom-coded from scratch and built around one goal — turning visitors into customers.
           </p>
           <div ref={toggleRef} className="inline-flex gap-1.5 p-1.5 rounded-xl"
             style={{ background:'rgba(122,146,153,0.07)', border:'1px solid rgba(122,146,153,0.18)' }}>
@@ -500,13 +532,11 @@ const Portfolio = ({ onOpenCaseStudy }) => {
                         <span className="flex items-center gap-2 text-sm">View Live Site <ExternalLink className="w-4 h-4" /></span>
                       </a>
                     )}
-                    {onOpenCaseStudy && (
-                      <button
-                        onClick={() => onOpenCaseStudy(cur.caseStudySlug)}
-                        className="cta-ghost-p text-gfx-white inter-font font-semibold px-6 py-3 rounded-xl flex-1 text-sm flex items-center justify-center gap-2">
-                        <BookOpen className="w-4 h-4 text-gfx-teal" /> Case Study
-                      </button>
-                    )}
+                    <button
+                      onClick={() => setCaseStudySlug(cur.caseStudySlug)}
+                      className="cta-ghost-p text-gfx-white inter-font font-semibold px-6 py-3 rounded-xl flex-1 text-sm flex items-center justify-center gap-2">
+                      <BookOpen className="w-4 h-4 text-gfx-teal" /> Case Study
+                    </button>
                   </div>
                 </div>
               </div>
@@ -515,9 +545,11 @@ const Portfolio = ({ onOpenCaseStudy }) => {
             {/* Dots + controls */}
             <div className="flex items-center justify-center gap-3 mt-6">
               {projects.map((_, i) => (
-                <div key={i} onClick={() => { goTo(i); setPlaying(false); }}
+                <button key={i} onClick={() => { goTo(i); setPlaying(false); }}
                   className={`dpill-p ${i===slide?'dp-on':''}`}
-                  style={{ width:i===slide?36:8 }} />
+                  style={{ width:i===slide?36:8 }}
+                  aria-label={`Slide ${i + 1}`}
+                  aria-current={i===slide ? 'true' : undefined} />
               ))}
               <button onClick={() => setPlaying(p=>!p)}
                 className="nav-btn-p w-9 h-9 rounded-full flex items-center justify-center text-gfx-white ml-2">
@@ -551,12 +583,10 @@ const Portfolio = ({ onOpenCaseStudy }) => {
                         className="cta-p text-white inter-font font-bold py-2 rounded-lg text-xs flex-1 text-center">
                         <span className="flex items-center justify-center gap-1.5">Live <ExternalLink className="w-3 h-3" /></span>
                       </a>
-                      {onOpenCaseStudy && (
-                        <button onClick={() => onOpenCaseStudy(proj.caseStudySlug)}
-                          className="cta-ghost-p text-white inter-font font-bold py-2 px-3 rounded-lg text-xs flex items-center gap-1">
-                          <BookOpen className="w-3 h-3" />
-                        </button>
-                      )}
+                      <button onClick={() => setCaseStudySlug(proj.caseStudySlug)}
+                        className="cta-ghost-p text-white inter-font font-bold py-2 px-3 rounded-lg text-xs flex items-center gap-1">
+                        <BookOpen className="w-3 h-3" />
+                      </button>
                     </div>
                   </div>
                   <div className="absolute top-2.5 left-2.5">
@@ -564,9 +594,20 @@ const Portfolio = ({ onOpenCaseStudy }) => {
                   </div>
                 </div>
                 <div className="p-5 flex flex-col gap-3">
-                  <div>
-                    <h3 className="rajdhani-font text-gfx-white text-xl font-bold leading-tight">{proj.name}</h3>
-                    <p className="inter-font text-gfx-teal text-xs font-semibold mt-0.5">{proj.tagline}</p>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="rajdhani-font text-gfx-white text-xl font-bold leading-tight">{proj.name}</h3>
+                      <p className="inter-font text-gfx-teal text-xs font-semibold mt-0.5">{proj.tagline}</p>
+                    </div>
+                    <span className="inter-font text-[10px] font-bold px-2 py-1 rounded-lg flex-shrink-0"
+                      style={{
+                        background: (pkgStyle[proj.stats.package] || pkgStyle.LAUNCH).bg,
+                        borderColor: (pkgStyle[proj.stats.package] || pkgStyle.LAUNCH).border,
+                        color: (pkgStyle[proj.stats.package] || pkgStyle.LAUNCH).text,
+                        border: '1px solid',
+                      }}>
+                      {proj.stats.package}
+                    </span>
                   </div>
                   <p className="inter-font text-gfx-white/60 text-xs leading-relaxed line-clamp-2">{proj.description}</p>
                   {proj.results && (
@@ -607,16 +648,28 @@ const Portfolio = ({ onOpenCaseStudy }) => {
             Ready to transform your digital presence? Schedule a free consultation and let's discuss how we can bring your vision to life.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="cta-p text-white inter-font font-bold px-10 py-4 rounded-xl shadow-xl">
+            <button onClick={onOpenContact} className="cta-p text-white inter-font font-bold px-10 py-4 rounded-xl shadow-xl">
               <span className="flex items-center gap-3 text-[15px]">Start Your Project Today <ArrowRight className="w-5 h-5" /></span>
             </button>
-            <button className="cta-ghost-p text-gfx-white inter-font font-semibold px-10 py-4 rounded-xl text-[15px] flex items-center gap-3">
+            <button
+              onClick={() => {
+                setViewMode('grid');
+                sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }}
+              className="cta-ghost-p text-gfx-white inter-font font-semibold px-10 py-4 rounded-xl text-[15px] flex items-center gap-3">
               View All Work <ArrowRight className="w-4 h-4 text-gfx-teal" />
             </button>
           </div>
         </div>
 
       </div>
+
+      <CaseStudyModal
+        project={projects.find((p) => p.caseStudySlug === caseStudySlug)}
+        isOpen={!!caseStudySlug}
+        onClose={() => setCaseStudySlug(null)}
+        onOpenContact={onOpenContact}
+      />
     </section>
   );
 };

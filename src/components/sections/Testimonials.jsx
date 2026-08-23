@@ -26,7 +26,7 @@ import avatarTavares from '../../components/images/4700enterprises-logo.png';
 
 const AUTOPLAY_DELAY = 15000; // ms per slide
 
-const testimonials = [
+export const testimonials = [
   {
     id: 1,
     name: 'Hope Simmons',
@@ -34,7 +34,6 @@ const testimonials = [
     company: 'Manifests of Hope',
     industry: 'Healthcare',
     avatar: avatarHope,
-    avatarBg: 'from-emerald-600 to-teal-600',
     rating: 5,
     year: 2025,
     service: 'Website Design & Shopify Integration',
@@ -52,6 +51,7 @@ const testimonials = [
       after: 'Significantly increased website traffic & sales',
     },
     caseStudyUrl: null,
+    caseStudySlug: 'moh-services',
     websiteUrl: 'https://manifestsofhope.com',
   },
   {
@@ -61,7 +61,6 @@ const testimonials = [
     company: 'ZuBar South Florida',
     industry: 'Hospitality',
     avatar: avatarMaria,
-    avatarBg: 'from-blue-600 to-indigo-600',
     rating: 5,
     year: 2025,
     service: 'Landing Page',
@@ -79,6 +78,7 @@ const testimonials = [
       after: 'Rejuvenated landing page driving real leads',
     },
     caseStudyUrl: null,
+    caseStudySlug: 'zubar',
     websiteUrl: 'https://zubarsouthflorida.com',
   },
   {
@@ -88,7 +88,6 @@ const testimonials = [
     company: 'The Nail Canvas',
     industry: 'Beauty & Wellness',
     avatar: avatarMelant,
-    avatarBg: 'from-purple-600 to-pink-600',
     rating: 5,
     year: 2024,
     service: 'UI/UX Design & Development',
@@ -106,6 +105,7 @@ const testimonials = [
       after: 'Automated 24/7 online booking system',
     },
     caseStudyUrl: null,
+    caseStudySlug: 'the-nail-canvas',
     websiteUrl: 'https://thenailcanvas.com',
   },
   {
@@ -115,7 +115,6 @@ const testimonials = [
     company: 'Brave Guidance Counseling Services',
     industry: 'Mental Healthcare',
     avatar: avatarSylvia,
-    avatarBg: 'from-orange-600 to-rose-600',
     rating: 5,
     year: 2024,
     service: 'Landing Page',
@@ -133,6 +132,7 @@ const testimonials = [
       after: 'Custom site with built-in lead generation',
     },
     caseStudyUrl: null,
+    caseStudySlug: null,
     websiteUrl: 'https://braveguidancecounseling.com',
   },
   {
@@ -142,7 +142,6 @@ const testimonials = [
     company: '4700 Enterprises',
     industry: 'Music Business & Media',
     avatar: avatarTavares,
-    avatarBg: 'from-cyan-600 to-blue-600',
     rating: 5,
     year: 2023,
     service: 'Website Design & SEO',
@@ -160,6 +159,7 @@ const testimonials = [
       after: 'Ranking #1 for all key search terms',
     },
     caseStudyUrl: '/case-studies/4700-enterprises', // example — set to null to hide
+    caseStudySlug: '4700-enterprises',
     websiteUrl: 'https://4700enterprises.com',
   },
 ];
@@ -194,11 +194,12 @@ const ProgressBar = ({ isPlaying, duration, onComplete, resetKey }) => {
   return (
     <div className="h-[3px] w-full rounded-full overflow-hidden" style={{ background: 'rgba(122,146,153,0.18)' }}>
       <div
-        className="h-full rounded-full"
+        className="h-full w-full rounded-full"
         style={{
-          width: `${width}%`,
+          transform: `scaleX(${width / 100})`,
+          transformOrigin: 'left',
           background: 'linear-gradient(90deg, #7A9299, #4A6572)',
-          transition: 'width 0.05s linear',
+          transition: 'transform 0.05s linear',
         }}
       />
     </div>
@@ -316,11 +317,14 @@ const Testimonials = () => {
         .dot-pill {
           height: 8px;
           border-radius: 4px;
+          border: none;
+          padding: 0;
           background: rgba(255,255,255,0.2);
           transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
           cursor: pointer;
         }
         .dot-pill:hover { background: rgba(122,146,153,0.5); }
+        .dot-pill:focus-visible { outline: 2px solid #7A9299; outline-offset: 2px; }
         .dot-pill.active {
           width: 36px !important;
           background: linear-gradient(90deg, #7A9299, #4A6572);
@@ -637,12 +641,13 @@ const Testimonials = () => {
         <div className="flex items-center justify-center gap-4 mb-14">
           <div className="flex items-center gap-2">
             {testimonials.map((_, i) => (
-              <div
+              <button
                 key={i}
                 onClick={() => { goTo(i); setIsPlaying(false); }}
                 className={`dot-pill ${i === currentIndex ? 'active' : ''}`}
                 style={{ width: i === currentIndex ? 36 : 8 }}
                 aria-label={`Go to testimonial ${i + 1}`}
+                aria-current={i === currentIndex ? 'true' : undefined}
               />
             ))}
           </div>
@@ -685,7 +690,7 @@ const Testimonials = () => {
               <ArrowUpRight className="w-5 h-5" />
             </span>
           </button>
-          <p className="inter-font text-gfx-white/35 text-xs mt-4">
+          <p className="inter-font text-gfx-white/45 text-xs mt-4">
             Free consultation · Response within 24 hours
           </p>
         </div>

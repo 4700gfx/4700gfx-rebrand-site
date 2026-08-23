@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import './App.css'
 import Navbar from './components/sections/Navbar'
 import Hero from './components/sections/Hero'
@@ -13,14 +14,19 @@ import Testimonials from './components/sections/Testimonials'
 
 
 function App() {
+  const [isContactOpen, setIsContactOpen] = useState(false)
 
   return (
     <div className='app-container'>
-      <Navbar></Navbar>
-      <Hero></Hero>
-      <WhatWeDo></WhatWeDo>
+      <Navbar
+        isContactOpen={isContactOpen}
+        onOpenContact={() => setIsContactOpen(true)}
+        onCloseContact={() => setIsContactOpen(false)}
+      ></Navbar>
+      <Hero onOpenContact={() => setIsContactOpen(true)}></Hero>
+      <WhatWeDo onOpenContact={() => setIsContactOpen(true)}></WhatWeDo>
       <WhatWeOffer></WhatWeOffer>
-      <Portfolio></Portfolio>
+      <Portfolio onOpenContact={() => setIsContactOpen(true)}></Portfolio>
       <Testimonials></Testimonials>
       <Pricing></Pricing>
       <Faq></Faq>

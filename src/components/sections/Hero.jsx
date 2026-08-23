@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { CheckCircle2 } from 'lucide-react';
 import logo from '../images/logo-white.png';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -68,19 +69,26 @@ const techStack = [
 ];
 
 const quickStats = [
-  { label: 'Experience',   stat: '3+ Years',  icon: '📅' },
-  { label: 'Projects',     stat: '20+ Done',  icon: '🚀' },
-  { label: 'Rating',       stat: '5.0 Stars', icon: '⭐' },
-  { label: 'Satisfaction', stat: '100%',      icon: '💯' },
+  { label: 'Experience',   value: 3,   decimals: 0, suffix: '+ Years', icon: '📅' },
+  { label: 'Projects',     value: 20,  decimals: 0, suffix: '+ Done',  icon: '🚀' },
+  { label: 'Rating',       value: 5,   decimals: 1, suffix: ' Stars',  icon: '⭐' },
+  { label: 'Satisfaction', value: 100, decimals: 0, suffix: '%',       icon: '💯' },
+];
+
+const trustPoints = [
+  'Custom-coded — zero templates',
+  'Launch in as little as 2 weeks',
+  '100% code ownership, no lock-in',
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-const Hero = () => {
+const Hero = ({ onOpenContact }) => {
   const sectionRef  = useRef(null);
   const badgeRef    = useRef(null);
   const headlineRef = useRef(null);
   const subRef      = useRef(null);
   const bodyRef     = useRef(null);
+  const trustRef    = useRef(null);
   const ctaRef      = useRef(null);
   const socialRef   = useRef(null);
   const logoColRef  = useRef(null);
@@ -92,6 +100,8 @@ const Hero = () => {
   const ruleRef     = useRef(null);
 
   useEffect(() => {
+    let removeTiltListeners = () => {};
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
@@ -135,9 +145,15 @@ const Hero = () => {
       );
 
       tl.fromTo(
+        trustRef.current?.children ? [...trustRef.current.children] : trustRef.current,
+        { y: 16, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.09, ease: 'power2.out' }, 1.05
+      );
+
+      tl.fromTo(
         ctaRef.current?.children ? [...ctaRef.current.children] : ctaRef.current,
         { y: 22, opacity: 0, scale: 0.92 },
-        { y: 0, opacity: 1, scale: 1, duration: 0.55, stagger: 0.10, ease: 'back.out(1.4)' }, 1.15
+        { y: 0, opacity: 1, scale: 1, duration: 0.55, stagger: 0.10, ease: 'back.out(1.4)' }, 1.20
       );
 
       tl.fromTo(
@@ -155,12 +171,51 @@ const Hero = () => {
         );
       }
 
+      // Stat numbers count up from 0 as each card lands
+      const statValueEls = statsRef.current?.querySelectorAll('.stat-value');
+      quickStats.forEach((s, i) => {
+        const el = statValueEls?.[i];
+        if (!el) return;
+        const counter = { val: 0 };
+        tl.to(counter, {
+          val: s.value,
+          duration: 1.0,
+          ease: 'power2.out',
+          onUpdate: () => {
+            el.textContent = `${s.decimals ? counter.val.toFixed(s.decimals) : Math.round(counter.val)}${s.suffix}`;
+          },
+        }, 1.40 + i * 0.10);
+      });
+
       tl.fromTo(carouselRef.current, { y: 32, opacity: 0 }, { y: 0, opacity: 1, duration: 0.70 }, 1.55);
 
       // Logo float
-      gsap.to(logoColRef.current?.querySelector('.logo-float'), {
+      const logoFloatEl = logoColRef.current?.querySelector('.logo-float');
+      gsap.to(logoFloatEl, {
         y: -20, rotation: 1.8, duration: 3.8, ease: 'sine.inOut', yoyo: true, repeat: -1,
       });
+
+      // Logo mouse-tilt parallax
+      if (logoFloatEl) {
+        const tiltX = gsap.quickTo(logoFloatEl, 'rotateX', { duration: 0.7, ease: 'power3.out' });
+        const tiltY = gsap.quickTo(logoFloatEl, 'rotateY', { duration: 0.7, ease: 'power3.out' });
+        const handleMove = (e) => {
+          const rect = sectionRef.current.getBoundingClientRect();
+          const px = (e.clientX - rect.left) / rect.width - 0.5;
+          const py = (e.clientY - rect.top) / rect.height - 0.5;
+          tiltY(px * 18);
+          tiltX(-py * 18);
+        };
+        const handleLeave = () => { tiltX(0); tiltY(0); };
+        const node = sectionRef.current;
+        node?.addEventListener('mousemove', handleMove);
+        node?.addEventListener('mouseleave', handleLeave);
+        // gsap.context() auto-cleans tweens on revert, but DOM listeners need manual cleanup
+        removeTiltListeners = () => {
+          node?.removeEventListener('mousemove', handleMove);
+          node?.removeEventListener('mouseleave', handleLeave);
+        };
+      }
 
       // Scroll fade-out
       gsap.to(sectionRef.current, {
@@ -174,7 +229,10 @@ const Hero = () => {
       gsap.to(bgOrb3Ref.current, { y: -40,  scrollTrigger: { trigger: sectionRef.current, start: 'top top', end: 'bottom top', scrub: 4 } });
 
     }, sectionRef);
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      removeTiltListeners();
+    };
   }, []);
 
   return (
@@ -292,6 +350,32 @@ const Hero = () => {
         .divider-line.right {
           background: linear-gradient(90deg, rgba(74,101,114,0.15), #7A9299);
         }
+
+        @keyframes ring-spin {
+          from { transform: rotate(0deg);   }
+          to   { transform: rotate(360deg); }
+        }
+        .logo-tilt-wrap { transform-style: preserve-3d; will-change: transform; }
+        .logo-ring {
+          background: conic-gradient(from 0deg, rgba(122,146,153,0.55), rgba(74,101,114,0.05) 30%, rgba(122,146,153,0.55) 60%, rgba(74,101,114,0.05) 90%, rgba(122,146,153,0.55));
+          animation: ring-spin 16s linear infinite;
+          -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+        }
+
+        .trust-item { transition: color 0.25s ease; }
+        .trust-item:hover { color: rgba(255,255,255,0.95) !important; }
+
+        @keyframes cta-glow-pulse {
+          0%, 100% { opacity: 0.28; transform: scale(1);    }
+          50%       { opacity: 0.58; transform: scale(1.09); }
+        }
+        .cta-glow {
+          background: linear-gradient(135deg, #7A9299, #4A6572);
+          filter: blur(18px);
+          animation: cta-glow-pulse 2.8s ease-in-out infinite;
+          z-index: 0;
+        }
       `}</style>
 
       {/* ── Background ── */}
@@ -315,14 +399,15 @@ const Hero = () => {
         <div className="grid lg:grid-cols-[400px_1fr] gap-14 lg:gap-20 items-center mb-20">
 
           {/* LEFT — logo */}
-          <div ref={logoColRef} className="flex items-center justify-center">
-            <div className="logo-float relative">
+          <div ref={logoColRef} className="flex items-center justify-center" style={{ perspective: '1000px' }}>
+            <div className="logo-float logo-tilt-wrap relative w-[380px] h-[380px]">
               <div className="absolute inset-0 rounded-full blur-3xl opacity-20"
                 style={{ background:'radial-gradient(circle,#7A9299 0%,transparent 70%)', transform:'scale(0.8)' }} />
+              <div className="logo-ring absolute -inset-5 rounded-full pointer-events-none" />
               <img
                 src={logo}
                 alt="4700 GFX Studios"
-                className="relative w-[380px] h-[380px] object-contain drop-shadow-2xl select-none"
+                className="relative w-full h-full object-contain drop-shadow-2xl select-none"
                 draggable="false"
               />
             </div>
@@ -348,12 +433,13 @@ const Hero = () => {
               className="rajdhani-font text-5xl sm:text-6xl lg:text-[68px] font-bold text-gfx-white leading-[1.05]"
               style={{ perspective:'700px' }}
             >
-              {['Agency', 'Quality.'].map((w, i) => (
+              {['Big', 'Agency', 'Results.'].map((w, i) => (
                 <span key={i} className="word word-wrapper inline-block mr-3">{w}</span>
               ))}
               <br />
-              <span className="word word-wrapper inline-block mr-3 headline-gradient">Startup</span>
-              <span className="word word-wrapper inline-block headline-gradient">Prices.</span>
+              {['Small', 'Business', 'Budget.'].map((w, i) => (
+                <span key={i} className={`word word-wrapper inline-block headline-gradient ${i < 2 ? 'mr-3' : ''}`}>{w}</span>
+              ))}
             </h1>
 
             {/* Accent rule */}
@@ -366,20 +452,38 @@ const Hero = () => {
 
             {/* Body */}
             <p ref={bodyRef} className="inter-font text-[15px] leading-relaxed" style={{color:'rgba(255,255,255,0.58)'}}>
-              At 4700 GFX Studios, every line of code and every design decision is crafted specifically for your business. We obsess over user experience, page speed, and conversion strategy so your website works around the clock to grow your revenue — whether you're a solo entrepreneur, a scaling local business, or a company ready for a full rebrand. Agency-quality execution at pricing that actually makes sense.
+              Every line of code and every design decision, crafted specifically for your business. We obsess over UX, page speed, and conversion strategy — so your website works around the clock to grow your revenue.
             </p>
+
+            {/* Trust points */}
+            <div ref={trustRef} className="flex flex-wrap gap-x-6 gap-y-2">
+              {trustPoints.map((t, i) => (
+                <span key={i} className="trust-item inter-font text-[13px] font-medium flex items-center gap-2"
+                  style={{ color:'rgba(255,255,255,0.68)' }}>
+                  <CheckCircle2 className="w-4 h-4 text-gfx-teal flex-shrink-0" />
+                  {t}
+                </span>
+              ))}
+            </div>
 
             {/* CTAs */}
             <div ref={ctaRef} className="flex flex-wrap gap-4 pt-1">
-              <button className="cta-primary text-white inter-font font-bold px-9 py-3.5 rounded-xl shadow-xl">
-                <span className="flex items-center gap-2.5 text-[15px]">
-                  View Our Work
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                  </svg>
-                </span>
-              </button>
-              <button className="cta-secondary text-gfx-white inter-font font-bold px-9 py-3.5 rounded-xl shadow-xl">
+              <div className="relative inline-flex">
+                <div className="cta-glow absolute inset-0 rounded-xl pointer-events-none" />
+                <button
+                  onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  className="cta-primary relative text-white inter-font font-bold px-9 py-3.5 rounded-xl shadow-xl">
+                  <span className="flex items-center gap-2.5 text-[15px]">
+                    View Our Work
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                  </span>
+                </button>
+              </div>
+              <button
+                onClick={onOpenContact}
+                className="cta-secondary text-gfx-white inter-font font-bold px-9 py-3.5 rounded-xl shadow-xl">
                 <span className="flex items-center gap-2.5 text-[15px]">
                   Start a Project
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -442,7 +546,9 @@ const Hero = () => {
               <div className="stat-card p-6 rounded-2xl cursor-pointer text-center space-y-2.5 shadow-xl">
                 <div className="text-[34px] leading-none">{s.icon}</div>
                 <p className="inter-font text-[10px] uppercase tracking-widest font-semibold" style={{color:'rgba(255,255,255,0.50)'}}>{s.label}</p>
-                <h3 className="rajdhani-font text-gfx-white text-xl font-bold">{s.stat}</h3>
+                <h3 className="stat-value rajdhani-font text-gfx-white text-xl font-bold">
+                  {(s.decimals ? (0).toFixed(s.decimals) : 0)}{s.suffix}
+                </h3>
               </div>
             </div>
           ))}
@@ -454,7 +560,7 @@ const Hero = () => {
           <div className="flex items-center gap-4 mb-8">
             <div className="divider-line" />
             <p className="inter-font text-[11px] uppercase tracking-[0.2em] font-semibold whitespace-nowrap px-2"
-              style={{color:'rgba(255,255,255,0.35)'}}>
+              style={{color:'rgba(255,255,255,0.45)'}}>
               Powered by industry-leading technologies
             </p>
             <div className="divider-line right" />

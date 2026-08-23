@@ -11,7 +11,7 @@ gsap.registerPlugin(ScrollTrigger);
 // ─────────────────────────────────────────────────────────────────────────────
 // Data
 // ─────────────────────────────────────────────────────────────────────────────
-const packages = [
+export const packages = [
   {
     id: 'launch',
     icon: '🚀',
@@ -475,15 +475,17 @@ const Pricing = () => {
         }
         .expand-btn:hover { color:#7A9299; }
 
-        /* Comparison table */
+        /* Comparison table — grid-rows trick avoids animating a layout
+           property directly, and doesn't need a guessed max-height cap */
         .cmp-table {
           background: linear-gradient(145deg,rgba(122,146,153,0.07) 0%,rgba(10,10,8,0.55) 100%);
           border: 1px solid rgba(122,146,153,0.18);
           backdrop-filter:blur(14px);
-          max-height:0; overflow:hidden;
-          transition: max-height 0.55s cubic-bezier(0.4,0,0.2,1);
+          display:grid; grid-template-rows:0fr; overflow:hidden;
+          transition: grid-template-rows 0.55s cubic-bezier(0.4,0,0.2,1);
         }
-        .cmp-table.cmp-open { max-height:600px; }
+        .cmp-table.cmp-open { grid-template-rows:1fr; }
+        .cmp-table > div { overflow:hidden; min-height:0; }
 
         /* Info boxes */
         .info-box {
@@ -714,7 +716,7 @@ const Pricing = () => {
                   {/* Price */}
                   <div className="mb-5">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="inter-font text-gfx-white/35 text-base line-through">{pkg.originalPrice}</span>
+                      <span className="inter-font text-gfx-white/50 text-base line-through">{pkg.originalPrice}</span>
                       <Zap className="w-4 h-4 text-gfx-teal" />
                     </div>
                     <div className="rajdhani-font text-gfx-teal text-[46px] font-bold leading-none mb-1">{pkg.price}</div>
@@ -890,7 +892,7 @@ const Pricing = () => {
               <ArrowRight className="w-5 h-5" />
             </span>
           </button>
-          <p className="inter-font text-xs mt-4" style={{ color:'rgba(255,255,255,0.28)' }}>
+          <p className="inter-font text-xs mt-4" style={{ color:'rgba(255,255,255,0.45)' }}>
             No commitment required &nbsp;·&nbsp; Response within 24 hours
           </p>
         </div>

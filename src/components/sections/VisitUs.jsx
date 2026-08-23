@@ -505,7 +505,7 @@ const VisitUs = () => {
               Call Us Now
             </a>
           </div>
-          <p className="inter-font text-xs mt-4" style={{ color:'rgba(255,255,255,0.28)' }}>
+          <p className="inter-font text-xs mt-4" style={{ color:'rgba(255,255,255,0.45)' }}>
             Walk-ins welcome during business hours &nbsp;·&nbsp; Same-day consultations available
           </p>
         </div>

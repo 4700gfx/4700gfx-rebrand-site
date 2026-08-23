@@ -190,7 +190,7 @@ const ContactModal = ({ isOpen, onClose }) => {
                 <button type="submit" disabled={state.submitting} className="submit-btn" style={{marginTop:4}}>
                   <span style={{display:'flex',alignItems:'center',justifyContent:'center',gap:10}}>
                     {state.submitting ? (
-                      <><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{animation:'spin-m 0.8s linear infinite'}}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Sending...</>
+                      <><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" data-motion-preserve style={{animation:'spin-m 0.8s linear infinite'}}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Sending...</>
                     ) : <><Send size={18}/>Send Message</>}
                   </span>
                 </button>
@@ -206,9 +206,8 @@ const ContactModal = ({ isOpen, onClose }) => {
 }
 
 /* ─── Navbar ─────────────────────────────────────────────────────────── */
-const Navbar = () => {
+const Navbar = ({ isContactOpen, onOpenContact, onCloseContact }) => {
   const [activeSection, setActiveSection] = useState('home')
-  const [isModalOpen,   setIsModalOpen]   = useState(false)
   const [mobileOpen,    setMobileOpen]    = useState(false)
   const indicatorRef = useRef(null)
   const itemRefs     = useRef({})
@@ -342,6 +341,9 @@ const Navbar = () => {
         .nav-item.is-active   { color:#ffffff; font-weight:650; }
         .nav-item:not(.is-active) { color:rgba(255,255,255,0.62); }
         .nav-item:hover:not(.is-active) { color:rgba(255,255,255,0.90); }
+        .nav-item:focus-visible, .mob-item:focus-visible {
+          outline: 2px solid #7A9299; outline-offset: 2px;
+        }
 
         /* Right cluster */
         .social-cluster {
@@ -411,7 +413,7 @@ const Navbar = () => {
       <div className="nav-banner">
         <span className="status-dot" style={{marginRight:8}} />
         Now booking projects for Q2 2025 — limited slots available &nbsp;·&nbsp;
-        <button onClick={() => setIsModalOpen(true)}
+        <button onClick={onOpenContact}
           style={{textDecoration:'underline',background:'none',border:'none',color:'#fff',cursor:'pointer',fontWeight:700,fontSize:12,fontFamily:'Inter,sans-serif'}}>
           Claim your spot →
         </button>
@@ -434,6 +436,10 @@ const Navbar = () => {
                   key={tab.key}
                   ref={el => itemRefs.current[tab.sectionId] = el}
                   onClick={() => handleNavClick(tab.sectionId)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleNavClick(tab.sectionId); } }}
+                  role="button"
+                  tabIndex={0}
+                  aria-current={activeSection === tab.sectionId ? 'page' : undefined}
                   className={`nav-item ${activeSection === tab.sectionId ? 'is-active' : ''}`}
                 >
                   {tab.name}
@@ -452,7 +458,7 @@ const Navbar = () => {
               </a>
             ))}
           </div>
-          <button className="contact-btn" onClick={() => setIsModalOpen(true)}>
+          <button className="contact-btn" onClick={onOpenContact}>
             <span>Contact Us</span>
           </button>
         </div>
@@ -470,6 +476,10 @@ const Navbar = () => {
             <div style={{padding:'10px'}}>
               {navItems.map(tab => (
                 <div key={tab.key} onClick={() => handleNavClick(tab.sectionId)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleNavClick(tab.sectionId); } }}
+                  role="button"
+                  tabIndex={0}
+                  aria-current={activeSection === tab.sectionId ? 'page' : undefined}
                   className={`mob-item ${activeSection === tab.sectionId ? 'mob-active' : ''}`}>
                   <span className="mob-dot" />
                   {tab.name}
@@ -484,7 +494,7 @@ const Navbar = () => {
                     <s.icon style={{width:16,height:16}} />
                   </a>
                 ))}
-                <button className="contact-btn" onClick={() => { setIsModalOpen(true); setMobileOpen(false) }}
+                <button className="contact-btn" onClick={() => { onOpenContact(); setMobileOpen(false) }}
                   style={{marginLeft:'auto',padding:'8px 18px',fontSize:13}}>
                   <span>Contact Us</span>
                 </button>
@@ -494,7 +504,7 @@ const Navbar = () => {
         </div>
       )}
 
-      <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <ContactModal isOpen={isContactOpen} onClose={onCloseContact} />
     </>
   )
 }
