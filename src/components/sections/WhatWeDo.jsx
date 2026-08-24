@@ -472,7 +472,7 @@ const WhatWeDo = ({ onOpenContact }) => {
                               {svc.description}
                             </p>
                           </div>
-                          <button onClick={onOpenContact} className="learn self-start">
+                          <button onClick={onOpenContact} className="learn btn-polish self-start">
                             Learn More
                             <ArrowRight className="c-arrow w-3.5 h-3.5" />
                           </button>
@@ -536,7 +536,7 @@ const WhatWeDo = ({ onOpenContact }) => {
           <p className="inter-font text-gfx-white/50 text-base mb-6">
             Not sure which service fits your goals? Let's figure it out together.
           </p>
-          <button className="cta-btn text-white inter-font font-bold px-10 py-4 rounded-xl shadow-xl">
+          <button onClick={onOpenContact} className="cta-btn btn-polish text-white inter-font font-bold px-10 py-4 rounded-xl shadow-xl">
             <span className="flex items-center gap-3 text-[15px]">
               Schedule a Free Consultation
               <ArrowRight className="w-5 h-5" />

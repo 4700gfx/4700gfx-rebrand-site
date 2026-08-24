@@ -43,7 +43,7 @@ const TODAY = (() => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
-const VisitUs = () => {
+const VisitUs = ({ onOpenContact }) => {
   const sectionRef   = useRef(null);
   const badgeRef     = useRef(null);
   const h2Ref        = useRef(null);
@@ -493,14 +493,14 @@ const VisitUs = () => {
             Ready to start your project? Schedule a consultation today.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="cta-solid text-white inter-font font-bold px-9 py-4 rounded-xl shadow-xl">
+            <button onClick={onOpenContact} className="cta-solid btn-polish text-white inter-font font-bold px-9 py-4 rounded-xl shadow-xl">
               <span className="flex items-center gap-3 text-[15px]">
                 <Calendar className="w-5 h-5" />
                 Book an Appointment
               </span>
             </button>
             <a href="tel:+15551234567"
-              className="cta-ghost text-gfx-white inter-font font-semibold px-9 py-4 rounded-xl flex items-center gap-3 text-[15px]">
+              className="cta-ghost btn-polish text-gfx-white inter-font font-semibold px-9 py-4 rounded-xl flex items-center gap-3 text-[15px]">
               <Phone className="w-5 h-5 text-gfx-teal" />
               Call Us Now
             </a>

@@ -6,32 +6,37 @@ import WhatWeDo from './components/sections/WhatWeDo'
 import WhatWeOffer from './components/sections/WhatWeOffer'
 import Portfolio from './components/sections/Portfolio'
 import Pricing from './components/sections/Pricing'
+import LeadMagnetSection from './components/sections/LeadMagnetSection'
 import Faq from './components/sections/FAQ'
-import Footer from './components/sections/Footer'
 import VisitUs from './components/sections/VisitUs'
+import ContactMe from './components/sections/ContactMe'
+import Footer from './components/sections/Footer'
 import Testimonials from './components/sections/Testimonials'
 
 
 
 function App() {
   const [isContactOpen, setIsContactOpen] = useState(false)
+  const openContact = () => setIsContactOpen(true)
 
   return (
     <div className='app-container'>
       <Navbar
         isContactOpen={isContactOpen}
-        onOpenContact={() => setIsContactOpen(true)}
+        onOpenContact={openContact}
         onCloseContact={() => setIsContactOpen(false)}
       ></Navbar>
-      <Hero onOpenContact={() => setIsContactOpen(true)}></Hero>
-      <WhatWeDo onOpenContact={() => setIsContactOpen(true)}></WhatWeDo>
-      <WhatWeOffer></WhatWeOffer>
-      <Portfolio onOpenContact={() => setIsContactOpen(true)}></Portfolio>
-      <Testimonials></Testimonials>
-      <Pricing></Pricing>
-      <Faq></Faq>
-      <VisitUs></VisitUs>
-      <Footer></Footer>
+      <Hero onOpenContact={openContact}></Hero>
+      <WhatWeDo onOpenContact={openContact}></WhatWeDo>
+      <WhatWeOffer onOpenContact={openContact}></WhatWeOffer>
+      <Portfolio onOpenContact={openContact}></Portfolio>
+      <Testimonials onOpenContact={openContact}></Testimonials>
+      <Pricing onOpenContact={openContact}></Pricing>
+      <LeadMagnetSection></LeadMagnetSection>
+      <Faq onOpenContact={openContact}></Faq>
+      <VisitUs onOpenContact={openContact}></VisitUs>
+      <ContactMe onOpenContact={openContact}></ContactMe>
+      <Footer onOpenModal={openContact}></Footer>
     </div>
   )
 }

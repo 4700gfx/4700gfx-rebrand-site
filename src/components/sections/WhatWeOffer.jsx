@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, MessageCircle } from 'lucide-react';
+import { scrollToSection } from '../../utils/scroll';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -95,7 +96,7 @@ const stats = [
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
-const WhatWeOffer = () => {
+const WhatWeOffer = ({ onOpenContact }) => {
   const sectionRef = useRef(null);
   const badgeRef   = useRef(null);
   const h2Ref      = useRef(null);
@@ -466,13 +467,13 @@ const WhatWeOffer = () => {
               Every project is unique, and we tailor our services to fit your specific needs. Whether you need one service or a complete digital transformation, we're here to bring your vision to life.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button className="cta-primary-o text-white inter-font font-bold px-9 py-4 rounded-xl shadow-xl">
+              <button onClick={() => scrollToSection('whatWeDo')} className="cta-primary-o btn-polish text-white inter-font font-bold px-9 py-4 rounded-xl shadow-xl">
                 <span className="flex items-center gap-3 text-[15px]">
                   View All Services
                   <ArrowRight className="w-4 h-4" />
                 </span>
               </button>
-              <button className="cta-ghost-o text-gfx-white inter-font font-semibold px-9 py-4 rounded-xl flex items-center gap-3 text-[15px]">
+              <button onClick={onOpenContact} className="cta-ghost-o btn-polish text-gfx-white inter-font font-semibold px-9 py-4 rounded-xl flex items-center gap-3 text-[15px]">
                 <MessageCircle className="w-4 h-4 text-gfx-teal flex-shrink-0" />
                 Let's Talk About Your Project
               </button>

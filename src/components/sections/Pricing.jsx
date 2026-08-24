@@ -175,7 +175,7 @@ const pkgAccent = {
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
-const Pricing = () => {
+const Pricing = ({ onOpenContact }) => {
   const [selected,        setSelected]        = useState(null);
   const [billing,         setBilling]         = useState('one-time');
   const [showComparison,  setShowComparison]  = useState(false);
@@ -773,10 +773,11 @@ const Pricing = () => {
                     <p className="inter-font text-gfx-white/75 text-xs leading-snug">{pkg.deliverables}</p>
                   </div>
 
-                  {/* CTA */}
+                  {/* CTA — marks the package selected and opens the contact
+                      form so the choice actually leads somewhere */}
                   <button
-                    onClick={() => setSelected(isSelected ? null : pkg.id)}
-                    className={`w-full py-3.5 rounded-xl inter-font font-bold text-sm ${pkg.popular || isSelected ? 'card-cta-primary' : 'card-cta'} text-white mb-4`}
+                    onClick={() => { setSelected(pkg.id); onOpenContact?.(); }}
+                    className={`w-full py-3.5 rounded-xl inter-font font-bold text-sm btn-polish ${pkg.popular || isSelected ? 'card-cta-primary' : 'card-cta'} text-white mb-4`}
                   >
                     <span className="flex items-center justify-center gap-2">
                       {isSelected ? (
@@ -886,7 +887,7 @@ const Pricing = () => {
             style={{ color:'rgba(255,255,255,0.58)' }}>
             Book a free consultation and we'll help you choose the right package for your goals, budget, and timeline.
           </p>
-          <button className="cta-main text-white inter-font font-bold px-12 py-5 rounded-xl shadow-xl">
+          <button onClick={onOpenContact} className="cta-main btn-polish text-white inter-font font-bold px-12 py-5 rounded-xl shadow-xl">
             <span className="flex items-center gap-3 text-[15px]">
               Schedule a Free Consultation
               <ArrowRight className="w-5 h-5" />

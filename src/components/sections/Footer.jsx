@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import logo from '../images/logo-white.png';
+import { scrollToSection } from '../../utils/scroll';
 import {
   Mail, Phone, MapPin,
   Facebook, Twitter, Instagram, Linkedin, Youtube,
@@ -26,7 +27,7 @@ const footerLinks = {
     { name:'Portfolio',     href:'#', sectionId:'portfolio'  },
     { name:'Our Process',   href:'#', sectionId:'whatWeDo'   },
     { name:'Pricing',       href:'#', sectionId:'pricing'    },
-    { name:'Testimonials',  href:'#', sectionId:null         },
+    { name:'Testimonials',  href:'#', sectionId:'testimonials' },
     { name:'FAQs',          href:'#', sectionId:'faq'        },
     { name:'Visit Us',      href:'#', sectionId:'visitUs'    },
   ],
@@ -46,10 +47,11 @@ const footerLinks = {
   ],
 };
 
+// Kept in sync with Navbar's socialLinks — same accounts, same order.
 const socialLinks = [
-  { Icon:Facebook,  href:'https://facebook.com',  label:'Facebook'  },
+  { Icon:Facebook,  href:'https://www.facebook.com/people/4700-GFX-Studios/61580859150471/', label:'Facebook'  },
+  { Icon:Instagram, href:'https://www.instagram.com/4700gfx/', label:'Instagram' },
   { Icon:Twitter,   href:'https://twitter.com',   label:'Twitter'   },
-  { Icon:Instagram, href:'https://instagram.com', label:'Instagram' },
   { Icon:Linkedin,  href:'https://linkedin.com',  label:'LinkedIn'  },
   { Icon:Youtube,   href:'https://youtube.com',   label:'YouTube'   },
 ];
@@ -90,7 +92,7 @@ const Footer = ({ onOpenModal }) => {
   const handleNavLink = (sectionId, openModal) => {
     if (openModal && onOpenModal) { onOpenModal(); return; }
     if (!sectionId) return;
-    document.getElementById(sectionId)?.scrollIntoView({ behavior:'smooth', block:'start' });
+    scrollToSection(sectionId);
   };
 
   const handleSubscribe = (e) => {
@@ -457,7 +459,7 @@ const Footer = ({ onOpenModal }) => {
               <form onSubmit={handleSubscribe} style={{display:'flex',flexDirection:'column',gap:10}}>
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                   placeholder="Enter your email" required className="news-input" />
-                <button type="submit" disabled={subscribed} className={`news-btn${subscribed?' subbed':''}`}>
+                <button type="submit" disabled={subscribed} className={`news-btn btn-polish${subscribed?' subbed':''}`}>
                   {subscribed ? <>✓ Subscribed!</> : <><Send style={{width:14,height:14}} /> Subscribe</>}
                 </button>
               </form>

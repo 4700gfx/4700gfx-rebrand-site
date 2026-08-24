@@ -37,6 +37,31 @@ h1 > h6 {
   font-optical-sizing: auto;
 }
 
+/* ── Shared button interaction polish ───────────────────────────────────
+   Every CTA across the site defines its own hover skin locally — this
+   class layers the same *interaction feel* on top of any of them: a
+   tactile press on click, a visible keyboard focus ring, and a trailing
+   icon that nudges forward on hover. Add `btn-polish` alongside a
+   button's existing class(es); nothing here touches color or layout. */
+.btn-polish:active:not(:disabled) {
+  /* !important is intentional: this only fires during :active, and needs
+     to visibly override whatever translateY/scale a button's own :hover
+     rule is applying at the same time (hover stays true while pressing). */
+  transform: scale(0.96) !important;
+  transition-duration: 0.12s !important;
+}
+.btn-polish:focus-visible {
+  outline: 2px solid #7A9299;
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+.btn-polish svg:last-child {
+  transition: transform 0.25s ease;
+}
+.btn-polish:hover svg:last-child {
+  transform: translateX(3px);
+}
+
 /* Respect prefers-reduced-motion sitewide: floor decorative CSS
    animations/transitions (shimmer text, floating logo, pinging badges,
    parallax orbs, Ken Burns zooms) to near-instant. Genuine in-progress

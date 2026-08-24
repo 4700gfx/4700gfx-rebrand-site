@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 
-const Input = ({ 
+const Input = ({
   label,
   type = 'text',
+  name,
+  id,
   placeholder,
   value,
   onChange,
@@ -13,21 +15,25 @@ const Input = ({
   className = ''
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  
+  const inputId = id || name;
+
   return (
     <div className={`w-full ${className}`}>
       {label && (
-        <label className="block text-sm font-medium text-[#0A0A08] mb-2">
+        <label htmlFor={inputId} className="block text-sm font-medium text-[#0A0A08] mb-2">
           {label}
           {required && <span className="text-[#7A9299] ml-1">*</span>}
         </label>
       )}
       <input
+        id={inputId}
+        name={name}
         type={type}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
         disabled={disabled}
+        required={required}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         className={`
