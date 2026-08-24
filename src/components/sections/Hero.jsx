@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CheckCircle2 } from 'lucide-react';
 import logo from '../images/logo-white.png';
+import { scrollToSection } from '../../utils/scroll';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -471,8 +472,8 @@ const Hero = ({ onOpenContact }) => {
               <div className="relative inline-flex">
                 <div className="cta-glow absolute inset-0 rounded-xl pointer-events-none" />
                 <button
-                  onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                  className="cta-primary relative text-white inter-font font-bold px-9 py-3.5 rounded-xl shadow-xl">
+                  onClick={() => scrollToSection('portfolio')}
+                  className="cta-primary btn-polish relative text-white inter-font font-bold px-9 py-3.5 rounded-xl shadow-xl">
                   <span className="flex items-center gap-2.5 text-[15px]">
                     View Our Work
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -483,7 +484,7 @@ const Hero = ({ onOpenContact }) => {
               </div>
               <button
                 onClick={onOpenContact}
-                className="cta-secondary text-gfx-white inter-font font-bold px-9 py-3.5 rounded-xl shadow-xl">
+                className="cta-secondary btn-polish text-gfx-white inter-font font-bold px-9 py-3.5 rounded-xl shadow-xl">
                 <span className="flex items-center gap-2.5 text-[15px]">
                   Start a Project
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

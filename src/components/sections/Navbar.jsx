@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useForm, ValidationError } from '@formspree/react'
 import logo from '../images/logo-white.png'
+import { scrollToSection } from '../../utils/scroll'
 import {
   Facebook, Instagram, Linkedin, Twitter, X, Send,
   CheckCircle, User, Mail, MessageSquare, Phone,
@@ -187,7 +188,7 @@ const ContactModal = ({ isOpen, onClose }) => {
 
                 {state.errors?.length > 0 && <p className="error-text" style={{textAlign:'center'}}>Something went wrong. Please try again.</p>}
 
-                <button type="submit" disabled={state.submitting} className="submit-btn" style={{marginTop:4}}>
+                <button type="submit" disabled={state.submitting} className="submit-btn btn-polish" style={{marginTop:4}}>
                   <span style={{display:'flex',alignItems:'center',justifyContent:'center',gap:10}}>
                     {state.submitting ? (
                       <><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" data-motion-preserve style={{animation:'spin-m 0.8s linear infinite'}}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Sending...</>
@@ -269,7 +270,7 @@ const Navbar = ({ isContactOpen, onOpenContact, onCloseContact }) => {
   const handleNavClick = (sectionId) => {
     setActiveSection(sectionId)
     setMobileOpen(false)
-    document.getElementById(sectionId)?.scrollIntoView({ behavior:'smooth', block:'start' })
+    scrollToSection(sectionId)
   }
 
   return (
@@ -458,7 +459,7 @@ const Navbar = ({ isContactOpen, onOpenContact, onCloseContact }) => {
               </a>
             ))}
           </div>
-          <button className="contact-btn" onClick={onOpenContact}>
+          <button className="contact-btn btn-polish" onClick={onOpenContact}>
             <span>Contact Us</span>
           </button>
         </div>
@@ -494,7 +495,7 @@ const Navbar = ({ isContactOpen, onOpenContact, onCloseContact }) => {
                     <s.icon style={{width:16,height:16}} />
                   </a>
                 ))}
-                <button className="contact-btn" onClick={() => { onOpenContact(); setMobileOpen(false) }}
+                <button className="contact-btn btn-polish" onClick={() => { onOpenContact(); setMobileOpen(false) }}
                   style={{marginLeft:'auto',padding:'8px 18px',fontSize:13}}>
                   <span>Contact Us</span>
                 </button>

@@ -72,13 +72,15 @@ const faqs = [
   },
 ];
 
+// `href: null` marks an option that opens the contact modal via onClick
+// instead of navigating — see the render logic below.
 const contactOptions = [
   {
     icon: <MessageCircle className="w-6 h-6 text-gfx-teal" />,
-    title: 'Live Chat',
-    sub: 'Chat with our team in real-time',
-    action: 'Start Chat',
-    href: '#',
+    title: 'Send a Message',
+    sub: 'Reach our team directly',
+    action: 'Get in Touch',
+    href: null,
   },
   {
     icon: <Mail className="w-6 h-6 text-gfx-teal" />,
@@ -99,7 +101,7 @@ const contactOptions = [
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
-const FAQ = () => {
+const FAQ = ({ onOpenContact }) => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [openQuestion,   setOpenQuestion]   = useState(null);
   const [searchQuery,    setSearchQuery]    = useState('');
@@ -190,7 +192,7 @@ const FAQ = () => {
 
   // ────────────────────────────────────────────────────────────────────
   return (
-    <section ref={sectionRef} id="faqs" className="py-20 lg:py-32 relative overflow-hidden">
+    <section ref={sectionRef} id="faq" className="py-20 lg:py-32 relative overflow-hidden">
       <style>{`
         @keyframes sh-faq {
           0%   { background-position: -200% center; }
@@ -528,10 +530,17 @@ const FAQ = () => {
                 <div className="icon-wrap mx-auto mb-4">{opt.icon}</div>
                 <h4 className="rajdhani-font text-gfx-white text-xl font-bold mb-1">{opt.title}</h4>
                 <p className="inter-font text-gfx-white/50 text-xs mb-4">{opt.sub}</p>
-                <a href={opt.href} className="contact-link inter-font text-sm">
-                  {opt.action}
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
+                {opt.href ? (
+                  <a href={opt.href} className="contact-link btn-polish inter-font text-sm">
+                    {opt.action}
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </a>
+                ) : (
+                  <button onClick={onOpenContact} className="contact-link btn-polish inter-font text-sm">
+                    {opt.action}
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
             ))}
           </div>

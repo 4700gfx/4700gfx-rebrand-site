@@ -1,12 +1,13 @@
-const Button = ({ 
-  children, 
-  variant = 'primary', 
-  size = 'md', 
+const Button = ({
+  children,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
   onClick,
   disabled = false,
   className = ''
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100';
   
   const variants = {
     primary: 'bg-[#4A6572] text-white hover:bg-[#3a5159] focus:ring-[#4A6572]',
@@ -24,6 +25,7 @@ const Button = ({
   
   return (
     <button
+      type={type}
       onClick={onClick}
       disabled={disabled}
       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}

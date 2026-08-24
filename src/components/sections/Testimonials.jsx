@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   Star,
   Quote,
@@ -23,6 +25,8 @@ import avatarMaria   from '../../components/images/zu-logo.png';
 import avatarMelant  from '../../components/images/the-nail-canvas-logo.png';
 import avatarSylvia  from '../../components/images/brave-guidance-logo.png';
 import avatarTavares from '../../components/images/4700enterprises-logo.png';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const AUTOPLAY_DELAY = 15000; // ms per slide
 
@@ -207,12 +211,22 @@ const ProgressBar = ({ isPlaying, duration, onComplete, resetKey }) => {
 };
 
 // ── Main component ────────────────────────────────────────────────────
-const Testimonials = () => {
+const Testimonials = ({ onOpenContact }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [direction, setDirection] = useState('next'); // for animation hint
   const [animKey, setAnimKey] = useState(0);
   const [progressKey, setProgressKey] = useState(0);
+
+  const sectionRef = useRef(null);
+  const badgeRef   = useRef(null);
+  const h2Ref      = useRef(null);
+  const ruleRef    = useRef(null);
+  const subRef     = useRef(null);
+  const cardWrapRef = useRef(null);
+  const controlsRef = useRef(null);
+  const statsRef   = useRef(null);
+  const ctaRef     = useRef(null);
 
   const current = testimonials[currentIndex];
 
@@ -246,8 +260,83 @@ const Testimonials = () => {
   };
   const pkgStyle = packageColors[current.package] || packageColors.LAUNCH;
 
+  // ── GSAP — scroll entrance (mirrors the choreography every sibling
+  // section uses: badge pop, headline word-flip, rule grow, card rise).
+  // The main card's own per-slide pop (t-card-anim / cardIn) is separate
+  // and keeps firing on every slide change — this only handles the
+  // one-time reveal of the section as it scrolls into view. ──────────
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+
+      gsap.fromTo(badgeRef.current,
+        { y: 40, opacity: 0, scale: 0.78 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.75, ease: 'back.out(2)',
+          scrollTrigger: { trigger: badgeRef.current, start: 'top 87%', toggleActions: 'play none none none' } }
+      );
+
+      const words = h2Ref.current?.querySelectorAll('.gsap-w');
+      if (words?.length) {
+        gsap.fromTo(words,
+          { y: 60, opacity: 0, rotateX: -45 },
+          { y: 0, opacity: 1, rotateX: 0, duration: 0.78, stagger: 0.065, ease: 'power3.out',
+            scrollTrigger: { trigger: h2Ref.current, start: 'top 84%', toggleActions: 'play none none none' } }
+        );
+      }
+
+      gsap.fromTo(ruleRef.current,
+        { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: 0.65, ease: 'power2.out', transformOrigin: 'center',
+          scrollTrigger: { trigger: ruleRef.current, start: 'top 88%', toggleActions: 'play none none none' } }
+      );
+
+      gsap.fromTo(subRef.current,
+        { y: 28, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.70, ease: 'power2.out',
+          scrollTrigger: { trigger: subRef.current, start: 'top 86%', toggleActions: 'play none none none' } }
+      );
+
+      gsap.fromTo(cardWrapRef.current,
+        { y: 64, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.90, ease: 'power3.out',
+          scrollTrigger: { trigger: cardWrapRef.current, start: 'top 80%', toggleActions: 'play none none none' } }
+      );
+
+      gsap.fromTo(controlsRef.current,
+        { y: 24, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.60, ease: 'power2.out',
+          scrollTrigger: { trigger: controlsRef.current, start: 'top 92%', toggleActions: 'play none none none' } }
+      );
+
+      const statCards = statsRef.current?.querySelectorAll('.glass-card');
+      if (statCards?.length) {
+        gsap.fromTo(statCards,
+          { y: 44, opacity: 0, scale: 0.92 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.60, stagger: 0.10, ease: 'back.out(1.5)',
+            scrollTrigger: { trigger: statsRef.current, start: 'top 85%', toggleActions: 'play none none none' } }
+        );
+      }
+
+      gsap.fromTo(ctaRef.current,
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.75, ease: 'power2.out',
+          scrollTrigger: { trigger: ctaRef.current, start: 'top 90%', toggleActions: 'play none none none' } }
+      );
+
+      // Orb parallax
+      sectionRef.current?.querySelectorAll('.orb-par').forEach((el, i) => {
+        gsap.to(el, {
+          y: i % 2 === 0 ? -90 : -55,
+          ease: 'none',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top bottom', end: 'bottom top', scrub: i % 2 === 0 ? 2 : 3 },
+        });
+      });
+
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="py-20 lg:py-32 relative overflow-hidden">
+    <section ref={sectionRef} id="testimonials" className="py-20 lg:py-32 relative overflow-hidden">
       <style>{`
         @keyframes cardIn {
           from { opacity: 0; transform: translateY(24px) scale(0.98); }
@@ -384,13 +473,16 @@ const Testimonials = () => {
           filter: blur(72px);
           pointer-events: none;
         }
+
+        /* GSAP word helper */
+        .gsap-w { display:inline-block; }
       `}</style>
 
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="orb w-[500px] h-[500px] top-1/4 left-1/6"
+        <div className="orb orb-par w-[500px] h-[500px] top-1/4 left-1/6"
           style={{ background: 'radial-gradient(circle, rgba(122,146,153,0.09) 0%, transparent 70%)' }} />
-        <div className="orb w-[400px] h-[400px] bottom-1/4 right-1/6"
+        <div className="orb orb-par w-[400px] h-[400px] bottom-1/4 right-1/6"
           style={{ background: 'radial-gradient(circle, rgba(74,101,114,0.08) 0%, transparent 70%)' }} />
         <div className="absolute inset-0 opacity-[0.02]"
           style={{
@@ -404,7 +496,7 @@ const Testimonials = () => {
 
         {/* ── Header ── */}
         <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2.5 mb-5 px-5 py-2 rounded-full"
+          <div ref={badgeRef} className="inline-flex items-center gap-2.5 mb-5 px-5 py-2 rounded-full"
             style={{ background: 'rgba(122,146,153,0.10)', border: '1px solid rgba(122,146,153,0.28)' }}>
             <Award className="w-4 h-4 text-gfx-teal" />
             <span className="inter-font text-gfx-teal font-semibold text-xs uppercase tracking-widest">
@@ -412,18 +504,25 @@ const Testimonials = () => {
             </span>
           </div>
 
-          <h2 className="rajdhani-font text-gfx-white text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-5">
-            Real Results from{' '}
-            <span className="accent-gradient">Real Clients</span>
+          <h2 ref={h2Ref} className="rajdhani-font text-gfx-white text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-5"
+            style={{ perspective: '900px' }}>
+            {'Real Results from'.split(' ').map((w, i) => (
+              <span key={i} className="gsap-w">{w}&nbsp;</span>
+            ))}
+            <span className="accent-gradient">
+              {'Real Clients'.split(' ').map((w, i) => (
+                <span key={i} className="gsap-w">{w}&nbsp;</span>
+              ))}
+            </span>
           </h2>
-          <div className="shimmer-line h-[2px] w-20 rounded-full mx-auto mb-5" />
-          <p className="inter-font text-gfx-white/65 text-base lg:text-lg max-w-2xl mx-auto">
+          <div ref={ruleRef} className="shimmer-line h-[2px] w-20 rounded-full mx-auto mb-5" />
+          <p ref={subRef} className="inter-font text-gfx-white/65 text-base lg:text-lg max-w-2xl mx-auto">
             Don't take our word for it — see how we've helped businesses like yours achieve measurable, lasting growth.
           </p>
         </div>
 
         {/* ── Main card ── */}
-        <div className="relative mb-6">
+        <div ref={cardWrapRef} className="relative mb-6">
 
           {/* Progress bar */}
           <div className="mb-4 px-1">
@@ -593,7 +692,7 @@ const Testimonials = () => {
                       href={current.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="link-btn-ghost text-gfx-white inter-font font-semibold text-sm px-4 py-2 rounded-lg flex items-center gap-2"
+                      className="link-btn-ghost btn-polish text-gfx-white inter-font font-semibold text-sm px-4 py-2 rounded-lg flex items-center gap-2"
                     >
                       <ExternalLink className="w-3.5 h-3.5 text-gfx-teal" />
                       Visit Website
@@ -606,7 +705,7 @@ const Testimonials = () => {
                       href={current.caseStudyUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="link-btn text-white inter-font font-bold text-sm px-5 py-2 rounded-lg flex items-center gap-2"
+                      className="link-btn btn-polish text-white inter-font font-bold text-sm px-5 py-2 rounded-lg flex items-center gap-2"
                     >
                       <span className="flex items-center gap-2">
                         View Case Study
@@ -638,7 +737,7 @@ const Testimonials = () => {
         </div>
 
         {/* ── Dots + play/pause ── */}
-        <div className="flex items-center justify-center gap-4 mb-14">
+        <div ref={controlsRef} className="flex items-center justify-center gap-4 mb-14">
           <div className="flex items-center gap-2">
             {testimonials.map((_, i) => (
               <button
@@ -665,7 +764,7 @@ const Testimonials = () => {
         </div>
 
         {/* ── Summary stats ── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-14">
+        <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-14">
           {[
             { value: '100%', label: 'Client Satisfaction' },
             { value: '20+',  label: 'Projects Delivered'  },
@@ -680,11 +779,11 @@ const Testimonials = () => {
         </div>
 
         {/* ── CTA ── */}
-        <div className="text-center">
+        <div ref={ctaRef} className="text-center">
           <p className="inter-font text-gfx-white/60 text-base mb-6">
             Ready to be our next success story?
           </p>
-          <button className="link-btn text-white inter-font font-bold px-10 py-4 rounded-xl shadow-xl">
+          <button onClick={onOpenContact} className="link-btn btn-polish text-white inter-font font-bold px-10 py-4 rounded-xl shadow-xl">
             <span className="flex items-center gap-3 text-base">
               Start Your Project Today
               <ArrowUpRight className="w-5 h-5" />

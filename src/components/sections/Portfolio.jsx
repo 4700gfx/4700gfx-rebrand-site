@@ -528,13 +528,13 @@ const Portfolio = ({ onOpenContact }) => {
                   <div className="flex gap-3 mt-auto pt-2">
                     {cur.liveUrl && (
                       <a href={cur.liveUrl} target="_blank" rel="noopener noreferrer"
-                        className="cta-p text-white inter-font font-bold px-6 py-3 rounded-xl flex-1 flex items-center justify-center">
+                        className="cta-p btn-polish text-white inter-font font-bold px-6 py-3 rounded-xl flex-1 flex items-center justify-center">
                         <span className="flex items-center gap-2 text-sm">View Live Site <ExternalLink className="w-4 h-4" /></span>
                       </a>
                     )}
                     <button
                       onClick={() => setCaseStudySlug(cur.caseStudySlug)}
-                      className="cta-ghost-p text-gfx-white inter-font font-semibold px-6 py-3 rounded-xl flex-1 text-sm flex items-center justify-center gap-2">
+                      className="cta-ghost-p btn-polish text-gfx-white inter-font font-semibold px-6 py-3 rounded-xl flex-1 text-sm flex items-center justify-center gap-2">
                       <BookOpen className="w-4 h-4 text-gfx-teal" /> Case Study
                     </button>
                   </div>
@@ -580,11 +580,11 @@ const Portfolio = ({ onOpenContact }) => {
                     onMouseLeave={e=>e.currentTarget.style.opacity=0}>
                     <div className="flex gap-2">
                       <a href={proj.liveUrl||'#'} target="_blank" rel="noopener noreferrer"
-                        className="cta-p text-white inter-font font-bold py-2 rounded-lg text-xs flex-1 text-center">
+                        className="cta-p btn-polish text-white inter-font font-bold py-2 rounded-lg text-xs flex-1 text-center">
                         <span className="flex items-center justify-center gap-1.5">Live <ExternalLink className="w-3 h-3" /></span>
                       </a>
                       <button onClick={() => setCaseStudySlug(proj.caseStudySlug)}
-                        className="cta-ghost-p text-white inter-font font-bold py-2 px-3 rounded-lg text-xs flex items-center gap-1">
+                        className="cta-ghost-p btn-polish text-white inter-font font-bold py-2 px-3 rounded-lg text-xs flex items-center gap-1">
                         <BookOpen className="w-3 h-3" />
                       </button>
                     </div>
@@ -648,7 +648,7 @@ const Portfolio = ({ onOpenContact }) => {
             Ready to transform your digital presence? Schedule a free consultation and let's discuss how we can bring your vision to life.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button onClick={onOpenContact} className="cta-p text-white inter-font font-bold px-10 py-4 rounded-xl shadow-xl">
+            <button onClick={onOpenContact} className="cta-p btn-polish text-white inter-font font-bold px-10 py-4 rounded-xl shadow-xl">
               <span className="flex items-center gap-3 text-[15px]">Start Your Project Today <ArrowRight className="w-5 h-5" /></span>
             </button>
             <button
@@ -656,7 +656,7 @@ const Portfolio = ({ onOpenContact }) => {
                 setViewMode('grid');
                 sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }}
-              className="cta-ghost-p text-gfx-white inter-font font-semibold px-10 py-4 rounded-xl text-[15px] flex items-center gap-3">
+              className="cta-ghost-p btn-polish text-gfx-white inter-font font-semibold px-10 py-4 rounded-xl text-[15px] flex items-center gap-3">
               View All Work <ArrowRight className="w-4 h-4 text-gfx-teal" />
             </button>
           </div>

@@ -267,12 +267,12 @@ const CaseStudyModal = ({ project, isOpen, onClose, onOpenContact }) => {
           <div className="flex flex-col sm:flex-row gap-3">
             {project.liveUrl && (
               <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
-                className="cs-cta-primary text-white inter-font font-bold px-6 py-3.5 rounded-xl flex-1 flex items-center justify-center">
+                className="cs-cta-primary btn-polish text-white inter-font font-bold px-6 py-3.5 rounded-xl flex-1 flex items-center justify-center">
                 <span className="flex items-center gap-2 text-sm">Visit Live Site <ExternalLink className="w-4 h-4" /></span>
               </a>
             )}
             <button onClick={handleStartProject}
-              className="cs-cta-ghost text-gfx-white inter-font font-semibold px-6 py-3.5 rounded-xl flex-1 text-sm flex items-center justify-center gap-2">
+              className="cs-cta-ghost btn-polish text-gfx-white inter-font font-semibold px-6 py-3.5 rounded-xl flex-1 text-sm flex items-center justify-center gap-2">
               Get a Similar Project <ArrowRight className="w-4 h-4 text-gfx-teal" />
             </button>
           </div>
